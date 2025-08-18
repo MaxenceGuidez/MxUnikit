@@ -1,0 +1,12 @@
+{
+  "name": "com.maxenceguidez.mxunikit.viewsystem",
+  "version": "0.0.0",
+  "displayName": "MxUnikit - View System",
+  "description": "Provides tools to easily implement a view system.",
+  "unity": "6000.2",
+  "unityRelease": "0b7",
+  "author": {
+    "name": "Maxence Guidez",
+    "email": "contact@maxenceguidez.com"
+  }
+}
