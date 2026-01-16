@@ -26,18 +26,16 @@ namespace MxUnikit.Log
         UI
     }
 
-    public static class Log
+    public static class MxLog
     {
-        private const bool _isEnabled = true;
-        private const bool _logStackTraceForExceptions = true;
+        private static MxLogConfig Config => MxLogConfig.Instance;
 
-        private static readonly HashSet<MxLogCategory> _disabledCategories = new HashSet<MxLogCategory>
-        {
-            // MxLogCategory.Network,
-            // MxLogCategory.Firebase,
-        };
+        private static bool IsEnabled => Config == null || Config.IsEnabled;
+        private static bool LogStackTraceForExceptions => Config == null || Config.LogStackTraceForExceptions;
 
-        private static readonly Dictionary<MxLogCategory, string> _colors = new Dictionary<MxLogCategory, string>
+        private static readonly HashSet<MxLogCategory> _defaultDisabledCategories = new HashSet<MxLogCategory>();
+
+        private static readonly Dictionary<MxLogCategory, string> _defaultColors = new Dictionary<MxLogCategory, string>
         {
             { MxLogCategory.API, "#00CED1" },
             { MxLogCategory.Audio, "#9370DB" },
@@ -52,35 +50,22 @@ namespace MxUnikit.Log
             { MxLogCategory.UI, "#FF69B4" }
         };
 
-        private static readonly Dictionary<string, MxLogCategory> _categoryKeywords = new Dictionary<string, MxLogCategory>
+        private static readonly Dictionary<string, MxLogCategory> _defaultKeywords = new Dictionary<string, MxLogCategory>
         {
-            // API
             { "api", MxLogCategory.API },
             { "backend", MxLogCategory.API },
             { "http", MxLogCategory.API },
             { "request", MxLogCategory.API },
-
-            // Audio
             { "audio", MxLogCategory.Audio },
             { "music", MxLogCategory.Audio },
             { "sound", MxLogCategory.Audio },
-
-            // Debug
             { "debug", MxLogCategory.Debug },
-
-            // Event
             { "event", MxLogCategory.Event },
             { "eventbus", MxLogCategory.Event },
             { "publish", MxLogCategory.Event },
             { "subscribe", MxLogCategory.Event },
-
-            // Firebase
             { "firebase", MxLogCategory.Firebase },
-
-            // Game
             { "game", MxLogCategory.Game },
-
-            // Inputs
             { "device", MxLogCategory.Inputs },
             { "input", MxLogCategory.Inputs },
             { "inputs", MxLogCategory.Inputs },
@@ -89,8 +74,6 @@ namespace MxUnikit.Log
             { "keyboard", MxLogCategory.Inputs },
             { "mouse", MxLogCategory.Inputs },
             { "touch", MxLogCategory.Inputs },
-
-            // Inventory
             { "accessory", MxLogCategory.Inventory },
             { "accessories", MxLogCategory.Inventory },
             { "inventory", MxLogCategory.Inventory },
@@ -100,8 +83,6 @@ namespace MxUnikit.Log
             { "pickups", MxLogCategory.Inventory },
             { "supply", MxLogCategory.Inventory },
             { "supplies", MxLogCategory.Inventory },
-
-            // Network
             { "client", MxLogCategory.Network },
             { "host", MxLogCategory.Network },
             { "lobby", MxLogCategory.Network },
@@ -110,18 +91,18 @@ namespace MxUnikit.Log
             { "relay", MxLogCategory.Network },
             { "server", MxLogCategory.Network },
             { "session", MxLogCategory.Network },
-
-            // Player
             { "character", MxLogCategory.Player },
             { "player", MxLogCategory.Player },
-
-            // UI
             { "dialog", MxLogCategory.UI },
             { "hud", MxLogCategory.UI },
             { "menu", MxLogCategory.UI },
             { "overlay", MxLogCategory.UI },
             { "ui", MxLogCategory.UI }
         };
+
+        private static HashSet<MxLogCategory> DisabledCategories => Config != null ? Config.DisabledCategoriesSet : _defaultDisabledCategories;
+        private static Dictionary<MxLogCategory, string> Colors => Config != null ? Config.ColorsDict : _defaultColors;
+        private static Dictionary<string, MxLogCategory> Keywords => Config != null ? Config.KeywordsDict : _defaultKeywords;
 
         #region Public API
 
@@ -140,14 +121,14 @@ namespace MxUnikit.Log
 
         private static void LogInternal(string message, MxLogCategory? category, LogType type)
         {
-            if (!_isEnabled) return;
+            if (!IsEnabled) return;
 
             (string className, string methodName) = GetCallerInfo();
             MxLogCategory cat = category ?? DetectCategory(className, methodName, message);
 
-            if (_disabledCategories.Contains(cat)) return;
+            if (DisabledCategories.Contains(cat)) return;
 
-            bool hasColor = _colors.TryGetValue(cat, out string color);
+            bool hasColor = Colors.TryGetValue(cat, out string color);
 
             string formatted = hasColor
                 ? $"[<color={color}>{className}</color>] - <color={color}>{methodName}()</color> : {message}"
@@ -205,20 +186,19 @@ namespace MxUnikit.Log
             }
 
             string source = $"{className} {methodName} {message}".ToLowerInvariant();
-            return (from kvp in _categoryKeywords where source.Contains(kvp.Key) select kvp.Value).FirstOrDefault();
+            return (from kvp in Keywords where source.Contains(kvp.Key) select kvp.Value).FirstOrDefault();
         }
-
 
         private static void LogException(Exception ex, string additionalMessage, MxLogCategory? category)
         {
-            if (!_isEnabled || ex == null) return;
+            if (!IsEnabled || ex == null) return;
 
             (string className, string methodName) = GetCallerInfo();
             MxLogCategory cat = category ?? DetectCategory(className, methodName, additionalMessage);
 
-            if (_disabledCategories.Contains(cat)) return;
+            if (DisabledCategories.Contains(cat)) return;
 
-            bool hasColor = _colors.TryGetValue(cat, out string color);
+            bool hasColor = Colors.TryGetValue(cat, out string color);
 
             string header = hasColor
                 ? $"[<color={color}>{className}</color>] - <color={color}>{methodName}()</color>"
@@ -231,7 +211,7 @@ namespace MxUnikit.Log
                 ? $"{header} : {additionalMessage}\n<color=#FF0000>{exceptionType}</color>: {exceptionMessage}"
                 : $"{header}\n<color=#FF0000>{exceptionType}</color>: {exceptionMessage}";
 
-            if (_logStackTraceForExceptions && !string.IsNullOrEmpty(ex.StackTrace))
+            if (LogStackTraceForExceptions && !string.IsNullOrEmpty(ex.StackTrace))
             {
                 formatted += $"\n{ex.StackTrace}";
             }
@@ -240,7 +220,7 @@ namespace MxUnikit.Log
             {
                 formatted +=
                     $"\n---> Inner Exception: <color=#FF4500>{ex.InnerException.GetType().Name}</color>: {ex.InnerException.Message}";
-                if (_logStackTraceForExceptions && !string.IsNullOrEmpty(ex.InnerException.StackTrace))
+                if (LogStackTraceForExceptions && !string.IsNullOrEmpty(ex.InnerException.StackTrace))
                 {
                     formatted += $"\n{ex.InnerException.StackTrace}";
                 }
