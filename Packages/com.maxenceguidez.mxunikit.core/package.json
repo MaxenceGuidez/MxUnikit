@@ -1,0 +1,12 @@
+{
+  "name": "com.maxenceguidez.mxunikit.core",
+  "version": "0.0.0",
+  "displayName": "MxUnikit - Core",
+  "description": "Provides tools to TODO.",
+  "unity": "6000.2",
+  "unityRelease": "1f1",
+  "author": {
+    "name": "Maxence Guidez",
+    "email": "contact@maxenceguidez.com"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "name": "com.maxenceguidez.mxunikit.ui",
+  "version": "0.0.0",
+  "displayName": "MxUnikit - UI",
+  "description": "Provides tools to TODO.",
+  "unity": "6000.2",
+  "unityRelease": "1f1",
+  "dependencies": {
+    "com.maxenceguidez.mxunikit.i18n": "0.0.0"
+  },
+  "author": {
+    "name": "Maxence Guidez",
+    "email": "contact@maxenceguidez.com"
+  },
+  "samples": [
+    {
+      "displayName": "Sample 1",
+      "path": "Samples~/Sample1"
+    }
+  ]
+}

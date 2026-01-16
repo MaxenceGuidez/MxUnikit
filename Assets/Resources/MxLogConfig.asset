@@ -1,0 +1,137 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc9807bbac44f741aad20aff522896a, type: 3}
+  m_Name: MxLogConfig
+  m_EditorClassIdentifier: MaxenceGuidez.MxUnikit.Log::MxUnikit.Log.MxLogConfig
+  IsEnabled: 1
+  LogStackTraceForExceptions: 1
+  DisabledCategories: 
+  CategoryColors:
+  - category: 1
+    color: '#00CED1'
+  - category: 2
+    color: '#9370DB'
+  - category: 3
+    color: '#FF6347'
+  - category: 4
+    color: '#DA70D6'
+  - category: 5
+    color: '#FFA500'
+  - category: 6
+    color: '#32CD32'
+  - category: 7
+    color: '#1E90FF'
+  - category: 8
+    color: '#FFD700'
+  - category: 9
+    color: '#4A90D9'
+  - category: 10
+    color: '#ADFF2F'
+  - category: 12
+    color: '#FF69B4'
+  CategoryKeywords:
+  - keyword: api
+    category: 1
+  - keyword: backend
+    category: 1
+  - keyword: http
+    category: 1
+  - keyword: request
+    category: 1
+  - keyword: audio
+    category: 2
+  - keyword: music
+    category: 2
+  - keyword: sound
+    category: 2
+  - keyword: debug
+    category: 3
+  - keyword: event
+    category: 4
+  - keyword: eventbus
+    category: 4
+  - keyword: publish
+    category: 4
+  - keyword: subscribe
+    category: 4
+  - keyword: firebase
+    category: 5
+  - keyword: game
+    category: 6
+  - keyword: device
+    category: 7
+  - keyword: input
+    category: 7
+  - keyword: inputs
+    category: 7
+  - keyword: joystick
+    category: 7
+  - keyword: key
+    category: 7
+  - keyword: keyboard
+    category: 7
+  - keyword: mouse
+    category: 7
+  - keyword: touch
+    category: 7
+  - keyword: accessory
+    category: 8
+  - keyword: accessories
+    category: 8
+  - keyword: inventory
+    category: 8
+  - keyword: item
+    category: 8
+  - keyword: items
+    category: 8
+  - keyword: pickup
+    category: 8
+  - keyword: pickups
+    category: 8
+  - keyword: supply
+    category: 8
+  - keyword: supplies
+    category: 8
+  - keyword: client
+    category: 9
+  - keyword: host
+    category: 9
+  - keyword: lobby
+    category: 9
+  - keyword: mirror
+    category: 9
+  - keyword: network
+    category: 9
+  - keyword: relay
+    category: 9
+  - keyword: server
+    category: 9
+  - keyword: session
+    category: 9
+  - keyword: character
+    category: 10
+  - keyword: player
+    category: 10
+  - keyword: dialog
+    category: 12
+  - keyword: hud
+    category: 12
+  - keyword: menu
+    category: 12
+  - keyword: overlay
+    category: 12
+  - keyword: ui
+    category: 12
+  - keyword: i18n
+    category: 9
+  - keyword: selector
+    category: 10

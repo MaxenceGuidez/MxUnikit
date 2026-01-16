@@ -1,0 +1,19 @@
+{
+    "name": "MaxenceGuidez.MxUnikit.UI.Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9d8d820689864d444afdb08c9319f74e",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:6546d7765b4165b40850b3667f981c26",
+        "GUID:41cc4668f38f48ce9dac78a898c15252"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

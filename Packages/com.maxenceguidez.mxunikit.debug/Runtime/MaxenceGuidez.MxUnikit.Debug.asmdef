@@ -1,0 +1,16 @@
+{
+    "name": "MaxenceGuidez.MxUnikit.Debug",
+    "rootNamespace": "",
+    "references": [
+        "GUID:f1af17eb8b8bbc54cb0d6486694c52bf"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
