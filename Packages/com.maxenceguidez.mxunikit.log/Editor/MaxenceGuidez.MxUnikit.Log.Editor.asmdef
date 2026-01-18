@@ -1,8 +1,12 @@
 {
-    "name": "MaxenceGuidez.MxUnikit.Log",
-    "rootNamespace": "MxUnikit.Log",
-    "references": [],
-    "includePlatforms": [],
+    "name": "MaxenceGuidez.MxUnikit.Log.Editor",
+    "rootNamespace": "MxUnikit.Log.Editor",
+    "references": [
+        "GUID:b68ce3f21e1127d4585c8b303958060f"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

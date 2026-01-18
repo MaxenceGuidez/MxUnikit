@@ -23,14 +23,11 @@ namespace MxUnikit.Log
             }
         }
 
-        [Header("General")]
         public bool IsEnabled = true;
         public bool LogStackTraceForExceptions = true;
 
-        [Header("Disabled Categories")]
         public List<MxLogCategory> DisabledCategories = new List<MxLogCategory>();
 
-        [Header("Category Colors")]
         public List<CategoryColor> CategoryColors = new List<CategoryColor>
         {
             new CategoryColor { category = MxLogCategory.API, color = "#00CED1" },
@@ -46,7 +43,6 @@ namespace MxUnikit.Log
             new CategoryColor { category = MxLogCategory.UI, color = "#FF69B4" }
         };
 
-        [Header("Category Keywords")]
         public List<CategoryKeyword> CategoryKeywords = new List<CategoryKeyword>
         {
             // API
