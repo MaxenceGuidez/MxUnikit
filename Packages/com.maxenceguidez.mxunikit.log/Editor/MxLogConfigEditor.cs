@@ -91,8 +91,8 @@ namespace MxUnikit.Log.Editor
                 drawElementCallback = (rect, index, _, _) =>
                 {
                     SerializedProperty element = _categoryColors.GetArrayElementAtIndex(index);
-                    SerializedProperty categoryProp = element.FindPropertyRelative("category");
-                    SerializedProperty colorProp = element.FindPropertyRelative("color");
+                    SerializedProperty categoryProp = element.FindPropertyRelative("Category");
+                    SerializedProperty colorProp = element.FindPropertyRelative("Color");
 
                     rect.y += 2;
                     float categoryWidth = rect.width * 0.5f;
@@ -146,8 +146,8 @@ namespace MxUnikit.Log.Editor
                 drawElementCallback = (rect, index, _, _) =>
                 {
                     SerializedProperty element = _categoryKeywords.GetArrayElementAtIndex(index);
-                    SerializedProperty keywordProp = element.FindPropertyRelative("keyword");
-                    SerializedProperty categoryProp = element.FindPropertyRelative("category");
+                    SerializedProperty categoryProp = element.FindPropertyRelative("Category");
+                    SerializedProperty keywordProp = element.FindPropertyRelative("Keyword");
 
                     rect.y += 2;
                     float keywordWidth = rect.width * 0.5f;
