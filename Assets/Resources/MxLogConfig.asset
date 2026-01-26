@@ -16,122 +16,118 @@ MonoBehaviour:
   LogStackTraceForExceptions: 1
   DisabledCategories: 
   CategoryColors:
-  - category: 1
-    color: '#00CED1'
-  - category: 2
-    color: '#9370DB'
-  - category: 3
-    color: '#FF6347'
-  - category: 4
-    color: '#DA70D6'
-  - category: 5
-    color: '#FFA500'
-  - category: 6
-    color: '#32CD32'
-  - category: 7
-    color: '#1E90FF'
-  - category: 8
-    color: '#FFD700'
-  - category: 9
-    color: '#4A90D9'
-  - category: 10
-    color: '#ADFF2F'
-  - category: 12
-    color: '#FF69B4'
+  - Category: 1
+    Color: '#00CED1'
+  - Category: 2
+    Color: '#9370DB'
+  - Category: 3
+    Color: '#FF6347'
+  - Category: 4
+    Color: '#DA70D6'
+  - Category: 5
+    Color: '#FFA500'
+  - Category: 6
+    Color: '#32CD32'
+  - Category: 7
+    Color: '#1E90FF'
+  - Category: 8
+    Color: '#FFD700'
+  - Category: 9
+    Color: '#4A90D9'
+  - Category: 10
+    Color: '#ADFF2F'
+  - Category: 12
+    Color: '#FF69B4'
   CategoryKeywords:
-  - keyword: api
-    category: 1
-  - keyword: backend
-    category: 1
-  - keyword: http
-    category: 1
-  - keyword: request
-    category: 1
-  - keyword: audio
-    category: 2
-  - keyword: music
-    category: 2
-  - keyword: sound
-    category: 2
-  - keyword: debug
-    category: 3
-  - keyword: event
-    category: 4
-  - keyword: eventbus
-    category: 4
-  - keyword: publish
-    category: 4
-  - keyword: subscribe
-    category: 4
-  - keyword: firebase
-    category: 5
-  - keyword: game
-    category: 6
-  - keyword: device
-    category: 7
-  - keyword: input
-    category: 7
-  - keyword: inputs
-    category: 7
-  - keyword: joystick
-    category: 7
-  - keyword: key
-    category: 7
-  - keyword: keyboard
-    category: 7
-  - keyword: mouse
-    category: 7
-  - keyword: touch
-    category: 7
-  - keyword: accessory
-    category: 8
-  - keyword: accessories
-    category: 8
-  - keyword: inventory
-    category: 8
-  - keyword: item
-    category: 8
-  - keyword: items
-    category: 8
-  - keyword: pickup
-    category: 8
-  - keyword: pickups
-    category: 8
-  - keyword: supply
-    category: 8
-  - keyword: supplies
-    category: 8
-  - keyword: client
-    category: 9
-  - keyword: host
-    category: 9
-  - keyword: lobby
-    category: 9
-  - keyword: mirror
-    category: 9
-  - keyword: network
-    category: 9
-  - keyword: relay
-    category: 9
-  - keyword: server
-    category: 9
-  - keyword: session
-    category: 9
-  - keyword: character
-    category: 10
-  - keyword: player
-    category: 10
-  - keyword: dialog
-    category: 12
-  - keyword: hud
-    category: 12
-  - keyword: menu
-    category: 12
-  - keyword: overlay
-    category: 12
-  - keyword: ui
-    category: 12
-  - keyword: i18n
-    category: 9
-  - keyword: selector
-    category: 10
+  - Category: 1
+    Keyword: api
+  - Category: 1
+    Keyword: backend
+  - Category: 1
+    Keyword: http
+  - Category: 1
+    Keyword: request
+  - Category: 2
+    Keyword: audio
+  - Category: 2
+    Keyword: music
+  - Category: 2
+    Keyword: sound
+  - Category: 3
+    Keyword: debug
+  - Category: 4
+    Keyword: event
+  - Category: 4
+    Keyword: eventbus
+  - Category: 4
+    Keyword: publish
+  - Category: 4
+    Keyword: subscribe
+  - Category: 5
+    Keyword: firebase
+  - Category: 6
+    Keyword: game
+  - Category: 7
+    Keyword: device
+  - Category: 7
+    Keyword: input
+  - Category: 7
+    Keyword: inputs
+  - Category: 7
+    Keyword: joystick
+  - Category: 7
+    Keyword: key
+  - Category: 7
+    Keyword: keyboard
+  - Category: 7
+    Keyword: mouse
+  - Category: 7
+    Keyword: touch
+  - Category: 8
+    Keyword: accessory
+  - Category: 8
+    Keyword: accessories
+  - Category: 8
+    Keyword: inventory
+  - Category: 8
+    Keyword: item
+  - Category: 8
+    Keyword: items
+  - Category: 8
+    Keyword: pickup
+  - Category: 8
+    Keyword: pickups
+  - Category: 8
+    Keyword: supply
+  - Category: 8
+    Keyword: supplies
+  - Category: 9
+    Keyword: client
+  - Category: 9
+    Keyword: host
+  - Category: 9
+    Keyword: lobby
+  - Category: 9
+    Keyword: mirror
+  - Category: 9
+    Keyword: network
+  - Category: 9
+    Keyword: relay
+  - Category: 9
+    Keyword: server
+  - Category: 9
+    Keyword: session
+  - Category: 10
+    Keyword: character
+  - Category: 10
+    Keyword: player
+  - Category: 12
+    Keyword: dialog
+  - Category: 12
+    Keyword: hud
+  - Category: 12
+    Keyword: menu
+  - Category: 12
+    Keyword: overlay
+  - Category: 12
+    Keyword: ui

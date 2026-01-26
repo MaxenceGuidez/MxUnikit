@@ -1,3 +1,4 @@
+using MxUnikit.Extensions;
 using MxUnikit.I18n;
 using MxUnikit.Log;
 using TMPro;
@@ -44,10 +45,7 @@ public class I18nSelector : MonoBehaviour
     private void Refresh()
     {
         MxLog.L("Refresh");
-        foreach (Transform child in contentButtonsLang) 
-        {
-            Destroy(child.gameObject);
-        }
+        contentButtonsLang.DestroyChildren();
 
         foreach (SystemLanguage lang in MxI18n.SupportedLanguages)
         {
