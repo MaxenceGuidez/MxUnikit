@@ -14,6 +14,12 @@
         "com.maxenceguidez.mxunikit.core": "0.0.0"
       }
     },
+    "com.maxenceguidez.mxunikit.extensions": {
+      "version": "file:com.maxenceguidez.mxunikit.extensions",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.maxenceguidez.mxunikit.i18n": {
       "version": "file:com.maxenceguidez.mxunikit.i18n",
       "depth": 0,
