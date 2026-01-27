@@ -1,0 +1,12 @@
+{
+  "name": "com.maxenceguidez.mxunikit.timer",
+  "version": "0.0.0",
+  "displayName": "MxUnikit - Timer",
+  "description": "Provides a professional timer system replacing coroutines with explicit, controllable, and debuggable time management.",
+  "unity": "6000.3",
+  "unityRelease": "4f1",
+  "author": {
+    "name": "Maxence Guidez",
+    "email": "contact@maxenceguidez.com"
+  }
+}
