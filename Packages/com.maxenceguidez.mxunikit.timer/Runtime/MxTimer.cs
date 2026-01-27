@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -12,10 +12,12 @@ namespace MxUnikit.Timer
         private static float _globalTimeScale = 1f;
         private static bool _globalPaused;
 
-        private static readonly List<MxTimerItem> _activeTimers = new List<MxTimerItem>();
+        private static readonly List<MxTimerItem> _scheduledTimers = new List<MxTimerItem>();
+        private static readonly List<MxTimerItem> _conditionalTimers = new List<MxTimerItem>();
+        private static readonly List<MxTimerItem> _progressTimers = new List<MxTimerItem>();
         private static readonly Dictionary<int, MxTimerItem> _timerLookup = new Dictionary<int, MxTimerItem>();
         private static readonly Stack<MxTimerItem> _pool = new Stack<MxTimerItem>();
-        private static readonly List<MxTimerItem> _toRemove = new List<MxTimerItem>();
+        private static readonly List<int> _toRemoveIndices = new List<int>(); // swap-and-pop removal
         private static readonly List<MxTimerItem> _toAdd = new List<MxTimerItem>();
         private static bool _isUpdating;
 
@@ -35,7 +37,7 @@ namespace MxUnikit.Timer
             set => _globalPaused = value;
         }
 
-        public static int ActiveCount => _activeTimers.Count;
+        public static int ActiveCount => _scheduledTimers.Count + _conditionalTimers.Count + _progressTimers.Count;
 
         #endregion
 
@@ -47,10 +49,12 @@ namespace MxUnikit.Timer
             _nextId = 1;
             _globalTimeScale = 1f;
             _globalPaused = false;
-            _activeTimers.Clear();
+            _scheduledTimers.Clear();
+            _conditionalTimers.Clear();
+            _progressTimers.Clear();
             _timerLookup.Clear();
             _pool.Clear();
-            _toRemove.Clear();
+            _toRemoveIndices.Clear();
             _toAdd.Clear();
             _isUpdating = false;
 
@@ -137,7 +141,6 @@ namespace MxUnikit.Timer
             int id = _nextId++;
 
             item.Id = id;
-            item.Version = 1;
             item.Type = MxTimerType.Frame;
             item.State = MxTimerState.Active;
             item.FrameDuration = 1;
@@ -155,12 +158,12 @@ namespace MxUnikit.Timer
             }
             else
             {
-                _activeTimers.Add(item);
+                _conditionalTimers.Add(item);
             }
 
             _timerLookup[id] = item;
 
-            return new MxTimerHandle(id, item.Version);
+            return new MxTimerHandle(id);
         }
 
         public static MxTimerHandle WaitWhile(Func<bool> condition, Action callback, object owner = null)
@@ -178,10 +181,10 @@ namespace MxUnikit.Timer
             int id = _nextId++;
 
             item.Id = id;
-            item.Version = 1;
             item.Type = MxTimerType.Time;
             item.State = MxTimerState.Active;
             item.Duration = duration;
+            item.DurationReciprocal = duration > 0f ? 1f / duration : 0f;
             item.Remaining = duration;
             item.Repeat = false;
             item.Callback = onComplete;
@@ -194,12 +197,12 @@ namespace MxUnikit.Timer
             }
             else
             {
-                _activeTimers.Add(item);
+                _progressTimers.Add(item);
             }
 
             _timerLookup[id] = item;
 
-            return new MxTimerHandle(id, item.Version);
+            return new MxTimerHandle(id);
         }
 
         public static MxTimerHandle RunForUnscaled(float duration, Action<float> onProgress, Action onComplete = null, object owner = null)
@@ -208,10 +211,10 @@ namespace MxUnikit.Timer
             int id = _nextId++;
 
             item.Id = id;
-            item.Version = 1;
             item.Type = MxTimerType.TimeUnscaled;
             item.State = MxTimerState.Active;
             item.Duration = duration;
+            item.DurationReciprocal = duration > 0f ? 1f / duration : 0f;
             item.Remaining = duration;
             item.Repeat = false;
             item.Callback = onComplete;
@@ -224,12 +227,12 @@ namespace MxUnikit.Timer
             }
             else
             {
-                _activeTimers.Add(item);
+                _progressTimers.Add(item);
             }
 
             _timerLookup[id] = item;
 
-            return new MxTimerHandle(id, item.Version);
+            return new MxTimerHandle(id);
         }
 
         #endregion
@@ -322,31 +325,108 @@ namespace MxUnikit.Timer
 
         public static void CancelAll(object owner)
         {
-            foreach (MxTimerItem timer in _activeTimers.Where(timer => timer.Owner == owner))
+            // manual loop avoids LINQ allocation
+            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
             {
-                timer.State = MxTimerState.Cancelled;
+                if (scheduledTimer.Owner == owner)
+                {
+                    scheduledTimer.State = MxTimerState.Cancelled;
+                }
+            }
+            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
+            {
+                if (conditionalTimer.Owner == owner)
+                {
+                    conditionalTimer.State = MxTimerState.Cancelled;
+                }
+            }
+            foreach (MxTimerItem progressTimer in _progressTimers)
+            {
+                if (progressTimer.Owner == owner)
+                {
+                    progressTimer.State = MxTimerState.Cancelled;
+                }
             }
         }
 
         public static void PauseAll(object owner)
         {
-            foreach (MxTimerItem timer in _activeTimers.Where(timer => timer.Owner == owner && timer.State == MxTimerState.Active))
+            // manual loop avoids LINQ allocation
+            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
             {
-                timer.State = MxTimerState.Paused;
+                if (scheduledTimer.Owner == owner && scheduledTimer.State == MxTimerState.Active)
+                {
+                    scheduledTimer.State = MxTimerState.Paused;
+                }
+            }
+            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
+            {
+                if (conditionalTimer.Owner == owner && conditionalTimer.State == MxTimerState.Active)
+                {
+                    conditionalTimer.State = MxTimerState.Paused;
+                }
+            }
+            foreach (MxTimerItem progressTimer in _progressTimers)
+            {
+                if (progressTimer.Owner == owner && progressTimer.State == MxTimerState.Active)
+                {
+                    progressTimer.State = MxTimerState.Paused;
+                }
             }
         }
 
         public static void ResumeAll(object owner)
         {
-            foreach (MxTimerItem timer in _activeTimers.Where(timer => timer.Owner == owner && timer.State == MxTimerState.Paused))
+            // manual loop avoids LINQ allocation
+            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
             {
-                timer.State = MxTimerState.Active;
+                if (scheduledTimer.Owner == owner && scheduledTimer.State == MxTimerState.Paused)
+                {
+                    scheduledTimer.State = MxTimerState.Active;
+                }
+            }
+            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
+            {
+                if (conditionalTimer.Owner == owner && conditionalTimer.State == MxTimerState.Paused)
+                {
+                    conditionalTimer.State = MxTimerState.Active;
+                }
+            }
+            foreach (MxTimerItem progressTimer in _progressTimers)
+            {
+                if (progressTimer.Owner == owner && progressTimer.State == MxTimerState.Paused)
+                {
+                    progressTimer.State = MxTimerState.Active;
+                }
             }
         }
 
         public static int CountFor(object owner)
         {
-            return _activeTimers.Count(timer => timer.Owner == owner && timer.State == MxTimerState.Active);
+            // manual loop avoids LINQ allocation
+            int count = 0;
+            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
+            {
+                if (scheduledTimer.Owner == owner && scheduledTimer.State == MxTimerState.Active)
+                {
+                    count++;
+                }
+            }
+            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
+            {
+                if (conditionalTimer.Owner == owner && conditionalTimer.State == MxTimerState.Active)
+                {
+                    count++;
+                }
+            }
+            foreach (MxTimerItem progressTimer in _progressTimers)
+            {
+                if (progressTimer.Owner == owner && progressTimer.State == MxTimerState.Active)
+                {
+                    count++;
+                }
+            }
+            return count;
         }
 
         #endregion
@@ -365,12 +445,25 @@ namespace MxUnikit.Timer
 
         public static void ClearAll()
         {
-            foreach (MxTimerItem timer in _activeTimers)
+            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
             {
-                timer.Reset();
-                _pool.Push(timer);
+                scheduledTimer.Reset();
+                _pool.Push(scheduledTimer);
             }
-            _activeTimers.Clear();
+            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
+            {
+                conditionalTimer.Reset();
+                _pool.Push(conditionalTimer);
+            }
+            foreach (MxTimerItem progressTimer in _progressTimers)
+            {
+                progressTimer.Reset();
+                _pool.Push(progressTimer);
+            }
+
+            _scheduledTimers.Clear();
+            _conditionalTimers.Clear();
+            _progressTimers.Clear();
             _timerLookup.Clear();
         }
 
@@ -393,106 +486,158 @@ namespace MxUnikit.Timer
 
             float scaledDelta = deltaTime * _globalTimeScale;
 
-            _toRemove.Clear();
+            _toRemoveIndices.Clear();
             _toAdd.Clear();
             _isUpdating = true;
 
-            foreach (MxTimerItem timer in _activeTimers)
+            // process scheduled timers (most common, hottest path)
+            for (int i = 0; i < _scheduledTimers.Count; i++)
             {
-                switch (timer.State)
+                MxTimerItem timer = _scheduledTimers[i];
+
+                // bitwise check for inactive states
+                if ((timer.State & MxTimerState.Inactive) != 0)
                 {
-                    case MxTimerState.Cancelled or MxTimerState.Completed:
-                        _toRemove.Add(timer);
-                        continue;
-                    case MxTimerState.Paused:
-                        continue;
+                    if (timer.State >= MxTimerState.Completed)
+                    {
+                        _toRemoveIndices.Add(i);
+                    }
+                    continue;
                 }
 
                 bool completed = false;
 
-                if (timer.Condition != null)
+                switch (timer.Type)
                 {
-                    bool conditionMet = timer.Condition();
-                    if (timer.WaitUntilCondition && conditionMet)
-                    {
-                        InvokeCallback(timer);
-                        completed = true;
-                    }
-                }
-                else if (timer.ProgressCallback != null)
-                {
-                    float dt = timer.Type == MxTimerType.TimeUnscaled ? unscaledDeltaTime : scaledDelta;
-                    timer.Remaining -= dt;
+                    case MxTimerType.Time:
+                        timer.Remaining -= scaledDelta;
+                        if (timer.Remaining <= 0f)
+                        {
+                            completed = ProcessTimerComplete(timer);
+                        }
+                        break;
 
-                    float progress = timer.Duration > 0f ? 1f - (timer.Remaining / timer.Duration) : 1f;
-                    progress = Mathf.Clamp01(progress);
+                    case MxTimerType.TimeUnscaled:
+                        timer.Remaining -= unscaledDeltaTime;
+                        if (timer.Remaining <= 0f)
+                        {
+                            completed = ProcessTimerComplete(timer);
+                        }
+                        break;
 
-                    try
-                    {
-                        timer.ProgressCallback(progress);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogException(e);
-                    }
-
-                    if (timer.Remaining <= 0f)
-                    {
-                        InvokeCallback(timer);
-                        completed = true;
-                    }
-                }
-                else
-                {
-                    switch (timer.Type)
-                    {
-                        case MxTimerType.Time:
-                            timer.Remaining -= scaledDelta;
-                            if (timer.Remaining <= 0f)
-                            {
-                                completed = ProcessTimerComplete(timer);
-                            }
-                            break;
-
-                        case MxTimerType.TimeUnscaled:
-                            timer.Remaining -= unscaledDeltaTime;
-                            if (timer.Remaining <= 0f)
-                            {
-                                completed = ProcessTimerComplete(timer);
-                            }
-                            break;
-
-                        case MxTimerType.Frame:
-                            timer.FrameRemaining--;
-                            if (timer.FrameRemaining <= 0)
-                            {
-                                completed = ProcessTimerComplete(timer);
-                            }
-                            break;
-                    }
+                    case MxTimerType.Frame:
+                        timer.FrameRemaining--;
+                        if (timer.FrameRemaining <= 0)
+                        {
+                            completed = ProcessTimerComplete(timer);
+                        }
+                        break;
                 }
 
                 if (completed)
                 {
-                    _toRemove.Add(timer);
+                    _toRemoveIndices.Add(i);
+                }
+            }
+
+            // process conditional timers (polling overhead)
+            for (int i = 0; i < _conditionalTimers.Count; i++)
+            {
+                MxTimerItem timer = _conditionalTimers[i];
+
+                // bitwise check for inactive states
+                if ((timer.State & MxTimerState.Inactive) != 0)
+                {
+                    if (timer.State >= MxTimerState.Completed)
+                    {
+                        _toRemoveIndices.Add(i | (1 << 30)); // encode list 1
+                    }
+                    continue;
+                }
+
+                // guaranteed to have Condition
+                if (!timer.WaitUntilCondition || !timer.Condition()) continue;
+
+                InvokeCallback(timer);
+                _toRemoveIndices.Add(i | (1 << 30)); // encode list 1
+            }
+
+            // process progress timers (per-frame callbacks)
+            for (int i = 0; i < _progressTimers.Count; i++)
+            {
+                MxTimerItem timer = _progressTimers[i];
+
+                // bitwise check for inactive states
+                if ((timer.State & MxTimerState.Inactive) != 0)
+                {
+                    if (timer.State >= MxTimerState.Completed)
+                    {
+                        _toRemoveIndices.Add(i | (2 << 30)); // encode list 2
+                    }
+                    continue;
+                }
+
+                float dt = timer.Type == MxTimerType.TimeUnscaled ? unscaledDeltaTime : scaledDelta;
+                timer.Remaining -= dt;
+
+                if (timer.Remaining <= 0f)
+                {
+                    timer.ProgressCallback(1f);
+                    InvokeCallback(timer);
+                    _toRemoveIndices.Add(i | (2 << 30)); // encode list 2
+                }
+                else
+                {
+                    float progress = (timer.Duration - timer.Remaining) * timer.DurationReciprocal;
+                    timer.ProgressCallback(progress);
                 }
             }
 
             _isUpdating = false;
 
-            foreach (MxTimerItem timer in _toRemove)
+            // swap-and-pop removal in reverse order, decode list index
+            for (int i = _toRemoveIndices.Count - 1; i >= 0; i--)
             {
-                _activeTimers.Remove(timer);
+                int encoded = _toRemoveIndices[i];
+                int listIndex = encoded >> 30;
+                int idx = encoded & 0x3FFFFFFF;
+
+                List<MxTimerItem> list = listIndex == 0 ? _scheduledTimers : (listIndex == 1 ? _conditionalTimers : _progressTimers);
+                int lastIdx = list.Count - 1;
+
+                MxTimerItem timer = list[idx];
                 _timerLookup.Remove(timer.Id);
                 timer.Reset();
                 _pool.Push(timer);
+
+                // swap with last element for O(1) removal
+                if (idx != lastIdx)
+                {
+                    list[idx] = list[lastIdx];
+                }
+                list.RemoveAt(lastIdx);
             }
 
-            if (_toAdd.Count > 0)
+            // defer-add: distribute to appropriate lists
+            if (_toAdd.Count <= 0) return;
+
+            foreach (MxTimerItem timer in _toAdd)
             {
-                _activeTimers.AddRange(_toAdd);
-                _toAdd.Clear();
+                if (timer.ProgressCallback != null)
+                {
+                    _progressTimers.Add(timer);
+                }
+                else if (timer.Condition != null)
+                {
+                    _conditionalTimers.Add(timer);
+                }
+                else
+                {
+                    _scheduledTimers.Add(timer);
+                }
             }
+
+            _toAdd.Clear();
         }
 
         private static bool ProcessTimerComplete(MxTimerItem timer)
@@ -511,18 +656,6 @@ namespace MxUnikit.Timer
             return false;
         }
 
-        private static void InvokeCallback(MxTimerItem timer)
-        {
-            try
-            {
-                timer.Callback?.Invoke();
-            }
-            catch (Exception e)
-            {
-                Debug.LogException(e);
-            }
-        }
-
         #endregion
 
         #region Private Helpers
@@ -533,7 +666,6 @@ namespace MxUnikit.Timer
             int id = _nextId++;
 
             item.Id = id;
-            item.Version = 1;
             item.Type = type;
             item.State = MxTimerState.Active;
             item.Duration = duration;
@@ -549,12 +681,12 @@ namespace MxUnikit.Timer
             }
             else
             {
-                _activeTimers.Add(item);
+                _scheduledTimers.Add(item);
             }
 
             _timerLookup[id] = item;
 
-            return new MxTimerHandle(id, item.Version);
+            return new MxTimerHandle(id);
         }
 
         private static MxTimerHandle AddFrameTimer(int frameDuration, Action callback, bool repeat, int maxRepeat, object owner)
@@ -563,7 +695,6 @@ namespace MxUnikit.Timer
             int id = _nextId++;
 
             item.Id = id;
-            item.Version = 1;
             item.Type = MxTimerType.Frame;
             item.State = MxTimerState.Active;
             item.FrameDuration = frameDuration;
@@ -579,27 +710,37 @@ namespace MxUnikit.Timer
             }
             else
             {
-                _activeTimers.Add(item);
+                _scheduledTimers.Add(item);
             }
 
             _timerLookup[id] = item;
 
-            return new MxTimerHandle(id, item.Version);
+            return new MxTimerHandle(id);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void InvokeCallback(MxTimerItem timer)
+        {
+            try
+            {
+                timer.Callback?.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static MxTimerItem GetPooledItem()
         {
             return _pool.Count > 0 ? _pool.Pop() : new MxTimerItem();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static bool TryGetTimer(MxTimerHandle handle, out MxTimerItem timer)
         {
-            if (_timerLookup.TryGetValue(handle.Id, out timer))
-            {
-                if (timer.Version == handle.Version) return true;
-            }
-            timer = null;
-            return false;
+            return _timerLookup.TryGetValue(handle.Id, out timer);
         }
 
         #endregion

@@ -1,10 +1,14 @@
 ﻿namespace MxUnikit.Timer
 {
-    internal enum MxTimerState
+    [System.Flags]
+    internal enum MxTimerState : byte
     {
-        Active,
-        Paused,
-        Completed,
-        Cancelled
+        Active = 0,
+        Paused = 1,
+        Completed = 2,
+        Cancelled = 4,
+
+        // bitwise mask for inactive states
+        Inactive = Paused | Completed | Cancelled
     }
 }
