@@ -1,0 +1,16 @@
+{
+  "name": "MaxenceGuidez.MxUnikit.Timer.Samples",
+  "rootNamespace": "MxUnikit.Timer.Samples",
+  "references": [
+    "MaxenceGuidez.MxUnikit.Timer"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

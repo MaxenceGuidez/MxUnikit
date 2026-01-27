@@ -8,5 +8,12 @@
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "MxTimer Demo",
+      "description": "Complete demonstration of all MxTimer features including scheduling, repeating, conditionals, progress timers, control methods, owner-based management, global settings, and sequences.",
+      "path": "Samples~/MxTimerDemo"
+    }
+  ]
 }
