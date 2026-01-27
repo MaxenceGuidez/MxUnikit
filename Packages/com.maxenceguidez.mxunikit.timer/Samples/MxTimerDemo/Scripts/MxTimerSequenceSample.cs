@@ -36,7 +36,7 @@ namespace MxUnikit.Timer.Samples
             {
                 _sequence1?.Stop();
                 _sequence1Status = "Running...";
-                _sequence1 = MxTimer.Sequence(this)
+                _sequence1 = MxTimer.Sequence()
                     .Call(() =>
                     {
                         _sequence1Status = "Step 1: Started";
@@ -90,7 +90,7 @@ namespace MxUnikit.Timer.Samples
                 _sequence2?.Stop();
                 _progressValue = 0f;
                 _sequence2Status = "Running...";
-                _sequence2 = MxTimer.Sequence(this)
+                _sequence2 = MxTimer.Sequence()
                     .Call(() =>
                     {
                         _sequence2Status = "Waiting for condition...";
@@ -129,7 +129,7 @@ namespace MxUnikit.Timer.Samples
                 _loopSequence?.Stop();
                 _loopCount = 0;
                 _loopStatus = "Looping...";
-                _loopSequence = MxTimer.Sequence(this)
+                _loopSequence = MxTimer.Sequence()
                     .Call(() =>
                     {
                         _loopCount++;

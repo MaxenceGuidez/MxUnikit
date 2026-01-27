@@ -19,7 +19,6 @@ namespace MxUnikit.Timer.Samples
         private bool _isRunning2;
 
         private GUIStyle _progressBarStyle;
-        private GUIStyle _progressFillStyle;
 
         private void OnGUI()
         {
@@ -108,12 +107,9 @@ namespace MxUnikit.Timer.Samples
 
         private void InitStyles()
         {
-            if (_progressBarStyle == null)
-            {
-                _progressBarStyle = new GUIStyle(GUI.skin.box);
-                _progressFillStyle = new GUIStyle();
-                _progressFillStyle.normal.background = Texture2D.whiteTexture;
-            }
+            if (_progressBarStyle != null) return;
+
+            _progressBarStyle = new GUIStyle(GUI.skin.box);
         }
 
         private void DrawProgressBar(float progress)

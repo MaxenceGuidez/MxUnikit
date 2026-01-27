@@ -40,9 +40,9 @@ namespace MxUnikit.Timer.Samples
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Create All"))
             {
-                CreateTimersFor(_ownerA, ref _tickA, "A");
-                CreateTimersFor(_ownerB, ref _tickB, "B");
-                CreateTimersFor(_ownerC, ref _tickC, "C");
+                CreateTimersFor(_ownerA, "A");
+                CreateTimersFor(_ownerB, "B");
+                CreateTimersFor(_ownerC, "C");
             }
             if (GUILayout.Button("Cancel All"))
             {
@@ -62,65 +62,68 @@ namespace MxUnikit.Timer.Samples
             GUILayout.EndArea();
         }
 
-        private void DrawOwnerSection(string name, object owner, ref int tick, Color color)
+        private void DrawOwnerSection(string ownerName, object owner, ref int tick, Color color)
         {
             Color oldColor = GUI.color;
             GUI.color = color;
-            GUILayout.Label($"{name} - Ticks: {tick}, Active: {MxTimer.CountFor(owner)}");
+            GUILayout.Label($"{ownerName} - Ticks: {tick}, Active: {MxTimer.CountFor(owner)}");
             GUI.color = oldColor;
 
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Create", GUILayout.Width(60)))
             {
-                CreateTimersFor(owner, ref tick, name);
+                CreateTimersFor(owner, ownerName);
             }
             if (GUILayout.Button("Pause", GUILayout.Width(60)))
             {
                 MxTimer.PauseAll(owner);
-                Debug.Log($"[{name}] All timers paused");
+                Debug.Log($"[{ownerName}] All timers paused");
             }
             if (GUILayout.Button("Resume", GUILayout.Width(60)))
             {
                 MxTimer.ResumeAll(owner);
-                Debug.Log($"[{name}] All timers resumed");
+                Debug.Log($"[{ownerName}] All timers resumed");
             }
             if (GUILayout.Button("Cancel", GUILayout.Width(60)))
             {
                 MxTimer.CancelAll(owner);
-                Debug.Log($"[{name}] All timers cancelled");
+                Debug.Log($"[{ownerName}] All timers cancelled");
             }
             GUILayout.EndHorizontal();
         }
 
-        private void CreateTimersFor(object owner, ref int tick, string name)
+        private void CreateTimersFor(object owner, string ownerName)
         {
             MxTimer.CancelAll(owner);
-            tick = 0;
 
-            Action incrementTick;
-            if (owner == _ownerA) incrementTick = () => _tickA++;
-            else if (owner == _ownerB) incrementTick = () => _tickB++;
-            else incrementTick = () => _tickC++;
+            if (owner == _ownerA) _tickA = 0;
+            else if (owner == _ownerB) _tickB = 0;
+            else _tickC = 0;
+
+            Action incrementTick =
+                owner == _ownerA ? () => _tickA++ :
+                owner == _ownerB ? () => _tickB++ :
+                () => _tickC++;
 
             MxTimer.Repeat(0.5f, () =>
             {
                 incrementTick();
-                Debug.Log($"[{name}] Timer 1 tick");
+                Debug.Log($"[{ownerName}] Timer 1 tick");
             }, owner);
 
             MxTimer.Repeat(0.7f, () =>
             {
                 incrementTick();
-                Debug.Log($"[{name}] Timer 2 tick");
+                Debug.Log($"[{ownerName}] Timer 2 tick");
             }, owner);
 
             MxTimer.Repeat(1.2f, () =>
             {
                 incrementTick();
-                Debug.Log($"[{name}] Timer 3 tick");
+                Debug.Log($"[{ownerName}] Timer 3 tick");
             }, owner);
 
-            Debug.Log($"[{name}] Created 3 timers");
+            Debug.Log($"[{ownerName}] Created 3 timers");
         }
 
         private void OnDestroy()

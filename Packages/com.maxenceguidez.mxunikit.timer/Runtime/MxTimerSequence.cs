@@ -6,9 +6,7 @@ namespace MxUnikit.Timer
     public class MxTimerSequence
     {
         private readonly List<SequenceStep> _steps = new List<SequenceStep>();
-        private readonly object _externalOwner;
         private int _currentIndex;
-        private MxTimerHandle _currentHandle;
         private bool _running;
         private bool _paused;
         private bool _loop;
@@ -81,9 +79,9 @@ namespace MxUnikit.Timer
             }
         }
 
-        internal MxTimerSequence(object owner)
+        internal MxTimerSequence()
         {
-            _externalOwner = owner;
+
         }
 
         #region Builder Methods
@@ -170,7 +168,6 @@ namespace MxUnikit.Timer
             _running = false;
             _paused = false;
             _currentIndex = 0;
-            _currentHandle = MxTimerHandle.Invalid;
 
             MxTimer.CancelAll(this);
         }
@@ -217,7 +214,6 @@ namespace MxUnikit.Timer
                 else
                 {
                     _running = false;
-                    _currentHandle = MxTimerHandle.Invalid;
                     _onComplete?.Invoke();
                 }
                 return;
@@ -229,7 +225,8 @@ namespace MxUnikit.Timer
         private void ExecuteCurrent()
         {
             if (_currentIndex >= _steps.Count) return;
-            _currentHandle = _steps[_currentIndex].Execute(this);
+
+            _steps[_currentIndex].Execute(this);
         }
 
         #endregion

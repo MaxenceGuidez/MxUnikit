@@ -8,7 +8,6 @@ namespace MxUnikit.Timer
 {
     public static class MxTimer
     {
-        private static MxTimerRunner _runner;
         private static int _nextId = 1;
         private static float _globalTimeScale = 1f;
         private static bool _globalPaused;
@@ -61,8 +60,9 @@ namespace MxUnikit.Timer
             }
 
             GameObject go = new GameObject("[MxTimer]") { hideFlags = HideFlags.HideAndDontSave };
+            go.AddComponent<MxTimerRunner>();
+
             Object.DontDestroyOnLoad(go);
-            _runner = go.AddComponent<MxTimerRunner>();
         }
 
         #endregion
@@ -378,9 +378,9 @@ namespace MxUnikit.Timer
 
         #region Sequence Builder
 
-        public static MxTimerSequence Sequence(object owner = null)
+        public static MxTimerSequence Sequence()
         {
-            return new MxTimerSequence(owner);
+            return new MxTimerSequence();
         }
 
         #endregion
@@ -397,11 +397,8 @@ namespace MxUnikit.Timer
             _toAdd.Clear();
             _isUpdating = true;
 
-            int count = _activeTimers.Count;
-            for (int i = 0; i < count; i++) // Do not use foreach loop
+            foreach (MxTimerItem timer in _activeTimers)
             {
-                MxTimerItem timer = _activeTimers[i];
-
                 switch (timer.State)
                 {
                     case MxTimerState.Cancelled or MxTimerState.Completed:
