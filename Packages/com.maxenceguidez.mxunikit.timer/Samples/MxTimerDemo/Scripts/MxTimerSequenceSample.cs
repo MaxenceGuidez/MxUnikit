@@ -1,5 +1,4 @@
 using UnityEngine;
-using MxUnikit.Timer;
 
 namespace MxUnikit.Timer.Samples
 {
@@ -125,7 +124,7 @@ namespace MxUnikit.Timer.Samples
             GUILayout.Label($"Status: {_loopStatus}");
             GUILayout.Label($"Loop count: {_loopCount}");
             GUILayout.BeginHorizontal();
-            if (GUILayout.Button("Start Loop"))
+            if (GUILayout.Button("Start"))
             {
                 _loopSequence?.Stop();
                 _loopCount = 0;
@@ -141,7 +140,9 @@ namespace MxUnikit.Timer.Samples
                     .Loop()
                     .Start();
             }
-            if (GUILayout.Button("Stop Loop"))
+            if (GUILayout.Button("Pause")) _loopSequence?.Pause();
+            if (GUILayout.Button("Resume")) _loopSequence?.Resume();
+            if (GUILayout.Button("Stop"))
             {
                 _loopSequence?.Stop();
                 _loopStatus = "Stopped";

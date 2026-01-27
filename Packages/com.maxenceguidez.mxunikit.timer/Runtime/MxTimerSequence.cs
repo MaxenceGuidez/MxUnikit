@@ -6,7 +6,7 @@ namespace MxUnikit.Timer
     public class MxTimerSequence
     {
         private readonly List<SequenceStep> _steps = new List<SequenceStep>();
-        private readonly object _owner;
+        private readonly object _externalOwner;
         private int _currentIndex;
         private MxTimerHandle _currentHandle;
         private bool _running;
@@ -19,7 +19,7 @@ namespace MxUnikit.Timer
 
         private abstract class SequenceStep
         {
-            public abstract MxTimerHandle Execute(MxTimerSequence sequence, object owner);
+            public abstract MxTimerHandle Execute(MxTimerSequence sequence);
         }
 
         private class DelayStep : SequenceStep
@@ -27,11 +27,11 @@ namespace MxUnikit.Timer
             public float Duration;
             public bool Unscaled;
 
-            public override MxTimerHandle Execute(MxTimerSequence sequence, object owner)
+            public override MxTimerHandle Execute(MxTimerSequence sequence)
             {
                 return Unscaled
-                    ? MxTimer.ScheduleUnscaled(Duration, sequence.Next, owner)
-                    : MxTimer.Schedule(Duration, sequence.Next, owner);
+                    ? MxTimer.ScheduleUnscaled(Duration, sequence.Next, sequence)
+                    : MxTimer.Schedule(Duration, sequence.Next, sequence);
             }
         }
 
@@ -39,9 +39,9 @@ namespace MxUnikit.Timer
         {
             public int Frames;
 
-            public override MxTimerHandle Execute(MxTimerSequence sequence, object owner)
+            public override MxTimerHandle Execute(MxTimerSequence sequence)
             {
-                return MxTimer.ScheduleFrames(Frames, sequence.Next, owner);
+                return MxTimer.ScheduleFrames(Frames, sequence.Next, sequence);
             }
         }
 
@@ -49,7 +49,7 @@ namespace MxUnikit.Timer
         {
             public Action Callback;
 
-            public override MxTimerHandle Execute(MxTimerSequence sequence, object owner)
+            public override MxTimerHandle Execute(MxTimerSequence sequence)
             {
                 Callback?.Invoke();
                 sequence.Next();
@@ -61,9 +61,9 @@ namespace MxUnikit.Timer
         {
             public Func<bool> Condition;
 
-            public override MxTimerHandle Execute(MxTimerSequence sequence, object owner)
+            public override MxTimerHandle Execute(MxTimerSequence sequence)
             {
-                return MxTimer.WaitUntil(Condition, sequence.Next, owner);
+                return MxTimer.WaitUntil(Condition, sequence.Next, sequence);
             }
         }
 
@@ -73,17 +73,17 @@ namespace MxUnikit.Timer
             public Action<float> OnProgress;
             public bool Unscaled;
 
-            public override MxTimerHandle Execute(MxTimerSequence sequence, object owner)
+            public override MxTimerHandle Execute(MxTimerSequence sequence)
             {
                 return Unscaled
-                    ? MxTimer.RunForUnscaled(Duration, OnProgress, sequence.Next, owner)
-                    : MxTimer.RunFor(Duration, OnProgress, sequence.Next, owner);
+                    ? MxTimer.RunForUnscaled(Duration, OnProgress, sequence.Next, sequence)
+                    : MxTimer.RunFor(Duration, OnProgress, sequence.Next, sequence);
             }
         }
 
         internal MxTimerSequence(object owner)
         {
-            _owner = owner;
+            _externalOwner = owner;
         }
 
         #region Builder Methods
@@ -167,13 +167,12 @@ namespace MxUnikit.Timer
         {
             if (!_running) return;
 
-            if (_currentHandle.IsValid)
-                MxTimer.Cancel(_currentHandle);
-
             _running = false;
             _paused = false;
             _currentIndex = 0;
             _currentHandle = MxTimerHandle.Invalid;
+
+            MxTimer.CancelAll(this);
         }
 
         public void Pause()
@@ -181,8 +180,7 @@ namespace MxUnikit.Timer
             if (!_running || _paused) return;
             _paused = true;
 
-            if (_currentHandle.IsValid)
-                MxTimer.Pause(_currentHandle);
+            MxTimer.PauseAll(this);
         }
 
         public void Resume()
@@ -190,8 +188,7 @@ namespace MxUnikit.Timer
             if (!_running || !_paused) return;
             _paused = false;
 
-            if (_currentHandle.IsValid)
-                MxTimer.Resume(_currentHandle);
+            MxTimer.ResumeAll(this);
         }
 
         public void Restart()
@@ -206,6 +203,8 @@ namespace MxUnikit.Timer
 
         private void Next()
         {
+            if (!_running) return;
+
             _currentIndex++;
 
             if (_currentIndex >= _steps.Count)
@@ -218,6 +217,7 @@ namespace MxUnikit.Timer
                 else
                 {
                     _running = false;
+                    _currentHandle = MxTimerHandle.Invalid;
                     _onComplete?.Invoke();
                 }
                 return;
@@ -229,7 +229,7 @@ namespace MxUnikit.Timer
         private void ExecuteCurrent()
         {
             if (_currentIndex >= _steps.Count) return;
-            _currentHandle = _steps[_currentIndex].Execute(this, _owner);
+            _currentHandle = _steps[_currentIndex].Execute(this);
         }
 
         #endregion

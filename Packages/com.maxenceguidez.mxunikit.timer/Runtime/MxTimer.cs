@@ -17,6 +17,8 @@ namespace MxUnikit.Timer
         private static readonly Dictionary<int, MxTimerItem> _timerLookup = new Dictionary<int, MxTimerItem>();
         private static readonly Stack<MxTimerItem> _pool = new Stack<MxTimerItem>();
         private static readonly List<MxTimerItem> _toRemove = new List<MxTimerItem>();
+        private static readonly List<MxTimerItem> _toAdd = new List<MxTimerItem>();
+        private static bool _isUpdating;
 
         private const int InitialPoolSize = 32;
 
@@ -50,6 +52,8 @@ namespace MxUnikit.Timer
             _timerLookup.Clear();
             _pool.Clear();
             _toRemove.Clear();
+            _toAdd.Clear();
+            _isUpdating = false;
 
             for (int i = 0; i < InitialPoolSize; i++)
             {
@@ -145,7 +149,15 @@ namespace MxUnikit.Timer
             item.WaitUntilCondition = true;
             item.Owner = owner;
 
-            _activeTimers.Add(item);
+            if (_isUpdating)
+            {
+                _toAdd.Add(item);
+            }
+            else
+            {
+                _activeTimers.Add(item);
+            }
+
             _timerLookup[id] = item;
 
             return new MxTimerHandle(id, item.Version);
@@ -176,7 +188,15 @@ namespace MxUnikit.Timer
             item.ProgressCallback = onProgress;
             item.Owner = owner;
 
-            _activeTimers.Add(item);
+            if (_isUpdating)
+            {
+                _toAdd.Add(item);
+            }
+            else
+            {
+                _activeTimers.Add(item);
+            }
+
             _timerLookup[id] = item;
 
             return new MxTimerHandle(id, item.Version);
@@ -198,7 +218,15 @@ namespace MxUnikit.Timer
             item.ProgressCallback = onProgress;
             item.Owner = owner;
 
-            _activeTimers.Add(item);
+            if (_isUpdating)
+            {
+                _toAdd.Add(item);
+            }
+            else
+            {
+                _activeTimers.Add(item);
+            }
+
             _timerLookup[id] = item;
 
             return new MxTimerHandle(id, item.Version);
@@ -366,9 +394,14 @@ namespace MxUnikit.Timer
             float scaledDelta = deltaTime * _globalTimeScale;
 
             _toRemove.Clear();
+            _toAdd.Clear();
+            _isUpdating = true;
 
-            foreach (MxTimerItem timer in _activeTimers)
+            int count = _activeTimers.Count;
+            for (int i = 0; i < count; i++) // Do not use foreach loop
             {
+                MxTimerItem timer = _activeTimers[i];
+
                 switch (timer.State)
                 {
                     case MxTimerState.Cancelled or MxTimerState.Completed:
@@ -448,12 +481,20 @@ namespace MxUnikit.Timer
                 }
             }
 
+            _isUpdating = false;
+
             foreach (MxTimerItem timer in _toRemove)
             {
                 _activeTimers.Remove(timer);
                 _timerLookup.Remove(timer.Id);
                 timer.Reset();
                 _pool.Push(timer);
+            }
+
+            if (_toAdd.Count > 0)
+            {
+                _activeTimers.AddRange(_toAdd);
+                _toAdd.Clear();
             }
         }
 
@@ -505,7 +546,15 @@ namespace MxUnikit.Timer
             item.Callback = callback;
             item.Owner = owner;
 
-            _activeTimers.Add(item);
+            if (_isUpdating)
+            {
+                _toAdd.Add(item);
+            }
+            else
+            {
+                _activeTimers.Add(item);
+            }
+
             _timerLookup[id] = item;
 
             return new MxTimerHandle(id, item.Version);
@@ -527,7 +576,15 @@ namespace MxUnikit.Timer
             item.Callback = callback;
             item.Owner = owner;
 
-            _activeTimers.Add(item);
+            if (_isUpdating)
+            {
+                _toAdd.Add(item);
+            }
+            else
+            {
+                _activeTimers.Add(item);
+            }
+
             _timerLookup[id] = item;
 
             return new MxTimerHandle(id, item.Version);
