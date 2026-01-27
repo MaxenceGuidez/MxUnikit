@@ -16,6 +16,7 @@ namespace MxUnikit.Timer
         private static readonly List<MxTimerItem> _conditionalTimers = new List<MxTimerItem>();
         private static readonly List<MxTimerItem> _progressTimers = new List<MxTimerItem>();
         private static readonly Dictionary<int, MxTimerItem> _timerLookup = new Dictionary<int, MxTimerItem>();
+        private static readonly Dictionary<object, HashSet<int>> _ownerToTimerIds = new Dictionary<object, HashSet<int>>(); // O(1) owner lookup
         private static readonly Stack<MxTimerItem> _pool = new Stack<MxTimerItem>();
         private static readonly List<int> _toRemoveIndices = new List<int>(); // swap-and-pop removal
         private static readonly List<MxTimerItem> _toAdd = new List<MxTimerItem>();
@@ -53,6 +54,7 @@ namespace MxUnikit.Timer
             _conditionalTimers.Clear();
             _progressTimers.Clear();
             _timerLookup.Clear();
+            _ownerToTimerIds.Clear();
             _pool.Clear();
             _toRemoveIndices.Clear();
             _toAdd.Clear();
@@ -162,6 +164,7 @@ namespace MxUnikit.Timer
             }
 
             _timerLookup[id] = item;
+            RegisterOwner(id, owner);
 
             return new MxTimerHandle(id);
         }
@@ -201,6 +204,7 @@ namespace MxUnikit.Timer
             }
 
             _timerLookup[id] = item;
+            RegisterOwner(id, owner);
 
             return new MxTimerHandle(id);
         }
@@ -231,6 +235,7 @@ namespace MxUnikit.Timer
             }
 
             _timerLookup[id] = item;
+            RegisterOwner(id, owner);
 
             return new MxTimerHandle(id);
         }
@@ -325,103 +330,55 @@ namespace MxUnikit.Timer
 
         public static void CancelAll(object owner)
         {
-            // manual loop avoids LINQ allocation
-            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
+            // O(1) owner lookup instead of O(n) iteration
+            if (!_ownerToTimerIds.TryGetValue(owner, out HashSet<int> timerIds)) return;
+
+            foreach (int id in timerIds)
             {
-                if (scheduledTimer.Owner == owner)
+                if (_timerLookup.TryGetValue(id, out MxTimerItem timer))
                 {
-                    scheduledTimer.State = MxTimerState.Cancelled;
-                }
-            }
-            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
-            {
-                if (conditionalTimer.Owner == owner)
-                {
-                    conditionalTimer.State = MxTimerState.Cancelled;
-                }
-            }
-            foreach (MxTimerItem progressTimer in _progressTimers)
-            {
-                if (progressTimer.Owner == owner)
-                {
-                    progressTimer.State = MxTimerState.Cancelled;
+                    timer.State = MxTimerState.Cancelled;
                 }
             }
         }
 
         public static void PauseAll(object owner)
         {
-            // manual loop avoids LINQ allocation
-            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
+            // O(1) owner lookup instead of O(n) iteration
+            if (!_ownerToTimerIds.TryGetValue(owner, out HashSet<int> timerIds)) return;
+
+            foreach (int id in timerIds)
             {
-                if (scheduledTimer.Owner == owner && scheduledTimer.State == MxTimerState.Active)
+                if (_timerLookup.TryGetValue(id, out MxTimerItem timer) && timer.State == MxTimerState.Active)
                 {
-                    scheduledTimer.State = MxTimerState.Paused;
-                }
-            }
-            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
-            {
-                if (conditionalTimer.Owner == owner && conditionalTimer.State == MxTimerState.Active)
-                {
-                    conditionalTimer.State = MxTimerState.Paused;
-                }
-            }
-            foreach (MxTimerItem progressTimer in _progressTimers)
-            {
-                if (progressTimer.Owner == owner && progressTimer.State == MxTimerState.Active)
-                {
-                    progressTimer.State = MxTimerState.Paused;
+                    timer.State = MxTimerState.Paused;
                 }
             }
         }
 
         public static void ResumeAll(object owner)
         {
-            // manual loop avoids LINQ allocation
-            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
+            // O(1) owner lookup instead of O(n) iteration
+            if (!_ownerToTimerIds.TryGetValue(owner, out HashSet<int> timerIds)) return;
+
+            foreach (int id in timerIds)
             {
-                if (scheduledTimer.Owner == owner && scheduledTimer.State == MxTimerState.Paused)
+                if (_timerLookup.TryGetValue(id, out MxTimerItem timer) && timer.State == MxTimerState.Paused)
                 {
-                    scheduledTimer.State = MxTimerState.Active;
-                }
-            }
-            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
-            {
-                if (conditionalTimer.Owner == owner && conditionalTimer.State == MxTimerState.Paused)
-                {
-                    conditionalTimer.State = MxTimerState.Active;
-                }
-            }
-            foreach (MxTimerItem progressTimer in _progressTimers)
-            {
-                if (progressTimer.Owner == owner && progressTimer.State == MxTimerState.Paused)
-                {
-                    progressTimer.State = MxTimerState.Active;
+                    timer.State = MxTimerState.Active;
                 }
             }
         }
 
         public static int CountFor(object owner)
         {
-            // manual loop avoids LINQ allocation
+            // O(1) owner lookup instead of O(n) iteration
+            if (!_ownerToTimerIds.TryGetValue(owner, out HashSet<int> timerIds)) return 0;
+
             int count = 0;
-            foreach (MxTimerItem scheduledTimer in _scheduledTimers)
+            foreach (int id in timerIds)
             {
-                if (scheduledTimer.Owner == owner && scheduledTimer.State == MxTimerState.Active)
-                {
-                    count++;
-                }
-            }
-            foreach (MxTimerItem conditionalTimer in _conditionalTimers)
-            {
-                if (conditionalTimer.Owner == owner && conditionalTimer.State == MxTimerState.Active)
-                {
-                    count++;
-                }
-            }
-            foreach (MxTimerItem progressTimer in _progressTimers)
-            {
-                if (progressTimer.Owner == owner && progressTimer.State == MxTimerState.Active)
+                if (_timerLookup.TryGetValue(id, out MxTimerItem timer) && timer.State == MxTimerState.Active)
                 {
                     count++;
                 }
@@ -465,6 +422,7 @@ namespace MxUnikit.Timer
             _conditionalTimers.Clear();
             _progressTimers.Clear();
             _timerLookup.Clear();
+            _ownerToTimerIds.Clear();
         }
 
         #endregion
@@ -607,6 +565,7 @@ namespace MxUnikit.Timer
 
                 MxTimerItem timer = list[idx];
                 _timerLookup.Remove(timer.Id);
+                UnregisterOwner(timer.Id, timer.Owner);
                 timer.Reset();
                 _pool.Push(timer);
 
@@ -685,6 +644,7 @@ namespace MxUnikit.Timer
             }
 
             _timerLookup[id] = item;
+            RegisterOwner(id, owner);
 
             return new MxTimerHandle(id);
         }
@@ -714,6 +674,7 @@ namespace MxUnikit.Timer
             }
 
             _timerLookup[id] = item;
+            RegisterOwner(id, owner);
 
             return new MxTimerHandle(id);
         }
@@ -741,6 +702,36 @@ namespace MxUnikit.Timer
         private static bool TryGetTimer(MxTimerHandle handle, out MxTimerItem timer)
         {
             return _timerLookup.TryGetValue(handle.Id, out timer);
+        }
+
+        // register timer with owner for O(1) lookup
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void RegisterOwner(int timerId, object owner)
+        {
+            if (owner == null) return;
+
+            if (!_ownerToTimerIds.TryGetValue(owner, out HashSet<int> timerSet))
+            {
+                timerSet = new HashSet<int>();
+                _ownerToTimerIds[owner] = timerSet;
+            }
+            timerSet.Add(timerId);
+        }
+
+        // unregister timer from owner
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void UnregisterOwner(int timerId, object owner)
+        {
+            if (owner == null) return;
+
+            if (!_ownerToTimerIds.TryGetValue(owner, out HashSet<int> timerSet)) return;
+
+            timerSet.Remove(timerId);
+            // cleanup empty sets to avoid memory leak
+            if (timerSet.Count == 0)
+            {
+                _ownerToTimerIds.Remove(owner);
+            }
         }
 
         #endregion
