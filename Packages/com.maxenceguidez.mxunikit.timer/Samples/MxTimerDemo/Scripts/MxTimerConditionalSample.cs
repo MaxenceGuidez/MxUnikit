@@ -22,7 +22,7 @@ namespace MxUnikit.Timer.Samples
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(630, 30, 300, 470));
+            GUILayout.BeginArea(new Rect(630, 50, 300, 450));
             GUILayout.Label("<b>CONDITIONAL TIMERS</b>", new GUIStyle(GUI.skin.label) { richText = true, fontSize = 16 });
             GUILayout.Space(10);
 

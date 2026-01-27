@@ -27,7 +27,7 @@ namespace MxUnikit.Timer.Samples
 
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(320, 30, 300, 470));
+            GUILayout.BeginArea(new Rect(320, 50, 300, 450));
             GUILayout.Label("<b>REPEAT TIMERS</b>", new GUIStyle(GUI.skin.label) { richText = true, fontSize = 16 });
             GUILayout.Space(10);
 

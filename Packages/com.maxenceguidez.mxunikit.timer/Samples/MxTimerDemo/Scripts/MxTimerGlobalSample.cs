@@ -9,7 +9,11 @@ namespace MxUnikit.Timer.Samples
     {
         private void OnGUI()
         {
-            GUILayout.BeginArea(new Rect(940, 30, 600, 470));
+            GUILayout.BeginArea(new Rect(940, 50, 600, 450));
+            GUILayout.BeginHorizontal();
+
+            // Left column - Controls
+            GUILayout.BeginVertical(GUILayout.Width(280));
             GUILayout.Label("<b>GLOBAL CONTROL</b>", new GUIStyle(GUI.skin.label) { richText = true, fontSize = 16 });
             GUILayout.Space(10);
 
@@ -56,10 +60,24 @@ namespace MxUnikit.Timer.Samples
                 MxTimer.ClearAll();
                 Debug.Log("[Global] All timers cleared!");
             }
-            GUILayout.Space(15);
+            GUILayout.Space(10);
 
-            // Stats
-            GUILayout.Label("<b>Statistics</b>", new GUIStyle(GUI.skin.label) { richText = true });
+            // Explanation
+            GUILayout.Label("<i>Note:</i>", new GUIStyle(GUI.skin.label) { richText = true, fontStyle = FontStyle.Italic });
+            GUILayout.Label("- Schedule/Repeat use Unity TimeScale");
+            GUILayout.Label("  AND MxTimer.GlobalTimeScale");
+            GUILayout.Label("- ScheduleUnscaled/RepeatUnscaled");
+            GUILayout.Label("  ignore both time scales");
+
+            GUILayout.EndVertical();
+
+            GUILayout.Space(20);
+
+            // Right column - Statistics
+            GUILayout.BeginVertical(GUILayout.Width(280));
+            GUILayout.Label("<b>STATISTICS</b>", new GUIStyle(GUI.skin.label) { richText = true, fontSize = 16 });
+            GUILayout.Space(10);
+
             GUILayout.Label($"Active timers: {MxTimer.ActiveCount}");
             GUILayout.Label($"Frame: {Time.frameCount}");
             GUILayout.Label($"Time: {Time.time:F2}");
@@ -71,15 +89,10 @@ namespace MxUnikit.Timer.Samples
             GUILayout.Label("<b>Effective Time Scales</b>", new GUIStyle(GUI.skin.label) { richText = true });
             GUILayout.Label($"Scaled timers: {effectiveScale:F2}x");
             GUILayout.Label($"Unscaled timers: 1.00x (always)");
-            GUILayout.Space(10);
 
-            // Explanation
-            GUILayout.Label("<i>Note:</i>", new GUIStyle(GUI.skin.label) { richText = true, fontStyle = FontStyle.Italic });
-            GUILayout.Label("- Schedule/Repeat use Unity TimeScale");
-            GUILayout.Label("  AND MxTimer.GlobalTimeScale");
-            GUILayout.Label("- ScheduleUnscaled/RepeatUnscaled");
-            GUILayout.Label("  ignore both time scales");
+            GUILayout.EndVertical();
 
+            GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
     }
