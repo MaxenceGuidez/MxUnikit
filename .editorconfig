@@ -51,44 +51,42 @@ csharp_preserve_single_line_blocks = true
 csharp_preserve_single_line_statements = false # To be verified
 csharp_indent_case_contents = true # To be verified
 
-# private field = _camelCase
-dotnet_naming_symbols.private_fields.applicable_kinds = field
-dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+# private and protected fields = _camelCase
+dotnet_naming_symbols.private_protected_fields.applicable_kinds = field
+dotnet_naming_symbols.private_protected_fields.applicable_accessibilities = private, protected
 
 dotnet_naming_style.prefix_underscore.capitalization = camel_case
 dotnet_naming_style.prefix_underscore.required_prefix = _
 
-dotnet_naming_rule.private_fields_underscore.symbols = private_fields
+dotnet_naming_rule.private_fields_underscore.symbols = private_protected_fields
 dotnet_naming_rule.private_fields_underscore.style = prefix_underscore
 dotnet_naming_rule.private_fields_underscore.severity = warning
 
-# public property = PascalCase
+# public properties = PascalCase
 dotnet_naming_symbols.public_properties.applicable_kinds = property
 dotnet_naming_symbols.public_properties.applicable_accessibilities = public
+
+dotnet_naming_style.pascal_case.capitalization = pascal_case
 
 dotnet_naming_rule.public_properties_pascal.symbols = public_properties
 dotnet_naming_rule.public_properties_pascal.style = pascal_case
 dotnet_naming_rule.public_properties_pascal.severity = warning
 
-# public method = PascalCase
+# public methods = PascalCase
 dotnet_naming_symbols.public_methods.applicable_kinds = method
 dotnet_naming_symbols.public_methods.applicable_accessibilities = public
-
-dotnet_naming_style.pascal_case.capitalization = pascal_case
 
 dotnet_naming_rule.public_methods_pascal.symbols = public_methods
 dotnet_naming_rule.public_methods_pascal.style = pascal_case
 dotnet_naming_rule.public_methods_pascal.severity = warning
 
-# constantes = UPPER_CASE
+# constantes = PascalCase
 dotnet_naming_symbols.constants.applicable_kinds = field
 dotnet_naming_symbols.constants.applicable_accessibilities = *
 dotnet_naming_symbols.constants.required_modifiers = const
 
-dotnet_naming_style.all_caps.capitalization = all_upper
-
 dotnet_naming_rule.constants_all_caps.symbols = constants
-dotnet_naming_rule.constants_all_caps.style = all_caps
+dotnet_naming_rule.constants_all_caps.style = pascal_case
 dotnet_naming_rule.constants_all_caps.severity = warning
 
 #######################################
