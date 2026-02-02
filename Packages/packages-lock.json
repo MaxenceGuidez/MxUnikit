@@ -10,9 +10,7 @@
       "version": "file:com.maxenceguidez.mxunikit.debug",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {
-        "com.maxenceguidez.mxunikit.core": "0.0.0"
-      }
+      "dependencies": {}
     },
     "com.maxenceguidez.mxunikit.extensions": {
       "version": "file:com.maxenceguidez.mxunikit.extensions",

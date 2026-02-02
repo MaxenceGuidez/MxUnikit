@@ -2,12 +2,9 @@
   "name": "com.maxenceguidez.mxunikit.debug",
   "version": "0.0.0",
   "displayName": "MxUnikit - Debug",
-  "description": "Provides tools to TODO.",
-  "unity": "6000.2",
-  "unityRelease": "1f1",
-  "dependencies": {
-    "com.maxenceguidez.mxunikit.core": "0.0.0"
-  },
+  "description": "Provides global debug mode management with event-driven state control.",
+  "unity": "6000.3",
+  "unityRelease": "4f1",
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
