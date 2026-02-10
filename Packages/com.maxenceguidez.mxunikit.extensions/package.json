@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.extensions",
   "version": "0.0.0",
   "displayName": "MxUnikit - Extensions",
-  "description": "Provides a collection of Unity extension methods for common operations",
+  "description": "Provides a collection of Unity extension methods for common operations.",
   "unity": "6000.3",
   "unityRelease": "7f1",
   "author": {

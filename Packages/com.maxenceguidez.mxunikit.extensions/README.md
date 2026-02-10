@@ -1,6 +1,6 @@
 ﻿# MxUnikit - Extensions
 
-Provides a collection of Unity extension methods for common operations
+Provides a collection of Unity extension methods for common operations.
 
 > WARN: This package is experimental and subject to frequent changes. It is not intended for public use.
 
