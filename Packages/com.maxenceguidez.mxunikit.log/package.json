@@ -4,7 +4,7 @@
   "displayName": "MxUnikit - Log",
   "description": "Provides a categorized logging utility with automatic caller detection and color-coded output.",
   "unity": "6000.3",
-  "unityRelease": "4f1",
+  "unityRelease": "7f1",
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
