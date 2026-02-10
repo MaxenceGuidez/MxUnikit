@@ -8,5 +8,12 @@
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Basic Validation",
+      "description": "Example script demonstrating RequiredFieldAttribute usage and validation tests.",
+      "path": "Samples/BasicValidation"
+    }
+  ]
 }

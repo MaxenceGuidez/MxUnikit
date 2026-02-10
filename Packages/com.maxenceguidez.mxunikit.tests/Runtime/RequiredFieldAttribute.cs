@@ -1,5 +1,11 @@
 using System;
 using UnityEngine;
 
-[AttributeUsage(AttributeTargets.Field)]
-public class RequiredFieldAttribute : PropertyAttribute {}
+namespace MxUnikit.Tests
+{
+    [AttributeUsage(AttributeTargets.Field)]
+    public class RequiredFieldAttribute : PropertyAttribute
+    {
+
+    }
+}
