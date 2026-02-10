@@ -1,0 +1,14 @@
+{
+    "name": "MaxenceGuidez.MxUnikit.Tests",
+    "rootNamespace": "MxUnikit.Tests",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

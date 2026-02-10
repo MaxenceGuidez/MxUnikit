@@ -1,0 +1,12 @@
+{
+  "name": "com.maxenceguidez.mxunikit.tests",
+  "version": "0.0.0",
+  "displayName": "MxUnikit - Tests",
+  "description": "Provides validation attributes and Unity Test Framework integrations for project-wide validation.",
+  "unity": "6000.3",
+  "unityRelease": "7f1",
+  "author": {
+    "name": "Maxence Guidez",
+    "email": "contact@maxenceguidez.com"
+  }
+}

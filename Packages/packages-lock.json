@@ -32,6 +32,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.maxenceguidez.mxunikit.tests": {
+      "version": "file:com.maxenceguidez.mxunikit.tests",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.maxenceguidez.mxunikit.timer": {
       "version": "file:com.maxenceguidez.mxunikit.timer",
       "depth": 0,
