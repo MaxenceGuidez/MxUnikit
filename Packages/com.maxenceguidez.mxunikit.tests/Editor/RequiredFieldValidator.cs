@@ -2,17 +2,20 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace MxUnikit.Tests.Editor
 {
     public static class RequiredFieldValidator
     {
+        #region Validation
+
         public static List<ValidationException> ValidateGameObject(GameObject gameObject, string assetPath)
         {
             List<ValidationException> exceptions = new List<ValidationException>();
-            MonoBehaviour[] components = gameObject.GetComponents<MonoBehaviour>();
+            Component[] components = gameObject.GetComponents<Component>();
 
-            foreach (MonoBehaviour component in components)
+            foreach (Component component in components)
             {
                 if (component == null) continue;
 
@@ -27,7 +30,7 @@ namespace MxUnikit.Tests.Editor
             return exceptions;
         }
 
-        private static void ValidateComponent(MonoBehaviour component, string assetPath, string gameObjectPath, List<ValidationException> exceptions)
+        private static void ValidateComponent(Component component, string assetPath, string gameObjectPath, List<ValidationException> exceptions)
         {
             Type type = component.GetType();
             FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
@@ -36,13 +39,29 @@ namespace MxUnikit.Tests.Editor
             {
                 if (Attribute.GetCustomAttribute(field, typeof(RequiredFieldAttribute)) is not RequiredFieldAttribute) continue;
 
+                if (!IsReferenceType(field.FieldType)) continue;
+
                 object value = field.GetValue(component);
 
-                if (IsReferenceType(field.FieldType) && value == null)
+                if (IsUnityObjectNull(value))
                 {
                     exceptions.Add(new ValidationException(assetPath, gameObjectPath, type.Name, field.Name));
                 }
             }
+        }
+
+        #endregion
+
+        #region Utils
+
+        private static bool IsUnityObjectNull(object obj)
+        {
+            return obj switch
+            {
+                null => true,
+                Object unityObj => !unityObj,
+                _ => false
+            };
         }
 
         private static bool IsReferenceType(Type type)
@@ -63,5 +82,7 @@ namespace MxUnikit.Tests.Editor
 
             return path;
         }
+
+        #endregion
     }
 }
