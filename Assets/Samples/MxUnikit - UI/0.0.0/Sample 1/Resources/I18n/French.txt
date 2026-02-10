@@ -1,4 +1,0 @@
-KEY=FR
-EXAMPLE=Ceci est un exemple !
-HELLO=Bonjour, %s !
-NAME=developpeur
