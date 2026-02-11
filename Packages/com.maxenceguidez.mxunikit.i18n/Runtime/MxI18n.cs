@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using MxUnikit.Core.Logging;
 using UnityEngine;
 
 namespace MxUnikit.I18n
@@ -61,7 +60,7 @@ namespace MxUnikit.I18n
 
             if (!SupportedLanguages.Contains(newLanguage))
             {
-                MxLogManager.Logger.LogWarning($"Language {newLanguage} is not supported. Fallback to English.");
+                Debug.LogWarning($"Language {newLanguage} is not supported. Fallback to English.");
                 newLanguage = SystemLanguage.English;
             }
 
@@ -121,7 +120,7 @@ namespace MxUnikit.I18n
             TextAsset i18nFile = Resources.Load<TextAsset>(I18nResourcesPath + language);
             if (i18nFile == null)
             {
-                MxLogManager.Logger.LogError($"I18n file for language {language} does not exist.");
+                Debug.LogError($"I18n file for language {language} does not exist.");
                 return;
             }
 

@@ -13,7 +13,7 @@
     {
       "displayName": "MxSingleton Demo",
       "description": "Complete demonstration of normal class singletons, persistent MonoBehaviour singletons, and scene-scoped singletons.",
-      "path": "Samples~/MxSingletonDemo"
+      "path": "Samples/MxSingletonDemo"
     }
   ]
 }

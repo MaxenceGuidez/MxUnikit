@@ -5,17 +5,8 @@
   "description": "Provides tools to easily implement internationalization.",
   "unity": "6000.2",
   "unityRelease": "1f1",
-  "dependencies": {
-    "com.maxenceguidez.mxunikit.core": "0.0.0"
-  },
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
-  },
-  "samples": [
-    {
-      "displayName": "Sample 1",
-      "path": "Samples~/Sample1"
-    }
-  ]
+  }
 }
