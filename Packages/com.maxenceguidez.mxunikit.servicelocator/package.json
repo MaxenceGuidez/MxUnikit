@@ -1,0 +1,19 @@
+{
+  "name": "com.maxenceguidez.mxunikit.servicelocator",
+  "version": "0.0.0",
+  "displayName": "MxUnikit - Service Locator",
+  "description": "Provides a professional service locator pattern for dependency management with explicit registration and resolution.",
+  "unity": "6000.3",
+  "unityRelease": "7f1",
+  "author": {
+    "name": "Maxence Guidez",
+    "email": "contact@maxenceguidez.com"
+  },
+  "samples": [
+    {
+      "displayName": "MxServiceLocator Demo",
+      "description": "Complete demonstration of service registration, resolution, and MonoBehaviour services using the IService interface.",
+      "path": "Samples/MxServiceLocatorDemo"
+    }
+  ]
+}

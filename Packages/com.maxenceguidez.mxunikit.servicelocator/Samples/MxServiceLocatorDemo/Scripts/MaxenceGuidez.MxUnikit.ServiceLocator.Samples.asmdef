@@ -1,0 +1,16 @@
+{
+  "name": "MaxenceGuidez.MxUnikit.ServiceLocator.Samples",
+  "rootNamespace": "MxUnikit.ServiceLocator.Samples",
+  "references": [
+    "MaxenceGuidez.MxUnikit.ServiceLocator"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
