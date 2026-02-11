@@ -32,6 +32,12 @@
       "source": "embedded",
       "dependencies": {}
     },
+    "com.maxenceguidez.mxunikit.singleton": {
+      "version": "file:com.maxenceguidez.mxunikit.singleton",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
     "com.maxenceguidez.mxunikit.tests": {
       "version": "file:com.maxenceguidez.mxunikit.tests",
       "depth": 0,
