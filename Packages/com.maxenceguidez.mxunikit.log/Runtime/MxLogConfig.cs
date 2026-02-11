@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace MxUnikit.Log
@@ -8,20 +9,15 @@ namespace MxUnikit.Log
     public class MxLogConfig : ScriptableObject
     {
         [Serializable]
-        public struct CategoryColor
+        public struct CategoryData
         {
-            public MxLogCategory Category;
+            public string CategoryId;
             public string Color;
+            public bool IsEnabled;
+            public List<string> Keywords;
         }
 
-        [Serializable]
-        public struct CategoryKeyword
-        {
-            public MxLogCategory Category;
-            public string Keyword;
-        }
-
-        private const string RESOURCE_PATH = "MxLogConfig";
+        private const string ResourcePath = "MxLogConfig";
 
         private static MxLogConfig _instance;
 
@@ -31,7 +27,7 @@ namespace MxUnikit.Log
             {
                 if (_instance == null)
                 {
-                    _instance = Resources.Load<MxLogConfig>(RESOURCE_PATH);
+                    _instance = Resources.Load<MxLogConfig>(ResourcePath);
                 }
                 return _instance;
             }
@@ -40,142 +36,190 @@ namespace MxUnikit.Log
         public bool IsEnabled = true;
         public bool LogStackTraceForExceptions = true;
 
-        public List<MxLogCategory> DisabledCategories = new List<MxLogCategory>();
-
-        public List<CategoryColor> CategoryColors = new List<CategoryColor>
+        public List<CategoryData> Categories = new List<CategoryData>
         {
-            new CategoryColor { Category = MxLogCategory.API, Color = "#00CED1" },
-            new CategoryColor { Category = MxLogCategory.Audio, Color = "#9370DB" },
-            new CategoryColor { Category = MxLogCategory.Debug, Color = "#FF6347" },
-            new CategoryColor { Category = MxLogCategory.Event, Color = "#DA70D6" },
-            new CategoryColor { Category = MxLogCategory.Firebase, Color = "#FFA500" },
-            new CategoryColor { Category = MxLogCategory.Game, Color = "#32CD32" },
-            new CategoryColor { Category = MxLogCategory.Inputs, Color = "#1E90FF" },
-            new CategoryColor { Category = MxLogCategory.Inventory, Color = "#FFD700" },
-            new CategoryColor { Category = MxLogCategory.Network, Color = "#4A90D9" },
-            new CategoryColor { Category = MxLogCategory.Player, Color = "#ADFF2F" },
-            new CategoryColor { Category = MxLogCategory.UI, Color = "#FF69B4" }
-        };
-
-        public List<CategoryKeyword> CategoryKeywords = new List<CategoryKeyword>
-        {
-            // API
-            new CategoryKeyword { Keyword = "api", Category = MxLogCategory.API },
-            new CategoryKeyword { Keyword = "backend", Category = MxLogCategory.API },
-            new CategoryKeyword { Keyword = "http", Category = MxLogCategory.API },
-            new CategoryKeyword { Keyword = "request", Category = MxLogCategory.API },
-
-            // Audio
-            new CategoryKeyword { Keyword = "audio", Category = MxLogCategory.Audio },
-            new CategoryKeyword { Keyword = "music", Category = MxLogCategory.Audio },
-            new CategoryKeyword { Keyword = "sound", Category = MxLogCategory.Audio },
-
-            // Debug
-            new CategoryKeyword { Keyword = "debug", Category = MxLogCategory.Debug },
-
-            // Event
-            new CategoryKeyword { Keyword = "event", Category = MxLogCategory.Event },
-            new CategoryKeyword { Keyword = "eventbus", Category = MxLogCategory.Event },
-            new CategoryKeyword { Keyword = "publish", Category = MxLogCategory.Event },
-            new CategoryKeyword { Keyword = "subscribe", Category = MxLogCategory.Event },
-
-            // Firebase
-            new CategoryKeyword { Keyword = "firebase", Category = MxLogCategory.Firebase },
-
-            // Game
-            new CategoryKeyword { Keyword = "game", Category = MxLogCategory.Game },
-
-            // Inputs
-            new CategoryKeyword { Keyword = "device", Category = MxLogCategory.Inputs },
-            new CategoryKeyword { Keyword = "input", Category = MxLogCategory.Inputs },
-            new CategoryKeyword { Keyword = "inputs", Category = MxLogCategory.Inputs },
-            new CategoryKeyword { Keyword = "joystick", Category = MxLogCategory.Inputs },
-            new CategoryKeyword { Keyword = "key", Category = MxLogCategory.Inputs },
-            new CategoryKeyword { Keyword = "keyboard", Category = MxLogCategory.Inputs },
-            new CategoryKeyword { Keyword = "mouse", Category = MxLogCategory.Inputs },
-            new CategoryKeyword { Keyword = "touch", Category = MxLogCategory.Inputs },
-
-            // Inventory
-            new CategoryKeyword { Keyword = "accessory", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "accessories", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "inventory", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "item", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "items", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "pickup", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "pickups", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "supply", Category = MxLogCategory.Inventory },
-            new CategoryKeyword { Keyword = "supplies", Category = MxLogCategory.Inventory },
-
-            // Network
-            new CategoryKeyword { Keyword = "client", Category = MxLogCategory.Network },
-            new CategoryKeyword { Keyword = "host", Category = MxLogCategory.Network },
-            new CategoryKeyword { Keyword = "lobby", Category = MxLogCategory.Network },
-            new CategoryKeyword { Keyword = "mirror", Category = MxLogCategory.Network },
-            new CategoryKeyword { Keyword = "network", Category = MxLogCategory.Network },
-            new CategoryKeyword { Keyword = "relay", Category = MxLogCategory.Network },
-            new CategoryKeyword { Keyword = "server", Category = MxLogCategory.Network },
-            new CategoryKeyword { Keyword = "session", Category = MxLogCategory.Network },
-
-            // Player
-            new CategoryKeyword { Keyword = "character", Category = MxLogCategory.Player },
-            new CategoryKeyword { Keyword = "player", Category = MxLogCategory.Player },
-
-            // UI
-            new CategoryKeyword { Keyword = "dialog", Category = MxLogCategory.UI },
-            new CategoryKeyword { Keyword = "hud", Category = MxLogCategory.UI },
-            new CategoryKeyword { Keyword = "menu", Category = MxLogCategory.UI },
-            new CategoryKeyword { Keyword = "overlay", Category = MxLogCategory.UI },
-            new CategoryKeyword { Keyword = "ui", Category = MxLogCategory.UI }
-        };
-
-        private HashSet<MxLogCategory> _disabledCategoriesCache;
-        private Dictionary<MxLogCategory, string> _colorsCache;
-        private Dictionary<string, MxLogCategory> _keywordsCache;
-
-        public HashSet<MxLogCategory> DisabledCategoriesSet
-        {
-            get
+            new CategoryData
             {
-                _disabledCategoriesCache ??= new HashSet<MxLogCategory>(DisabledCategories);
-                return _disabledCategoriesCache;
+                CategoryId = "Default",
+                Color = "#FFFFFF",
+                IsEnabled = true,
+                Keywords = new List<string>()
+            },
+            new CategoryData
+            {
+                CategoryId = "API",
+                Color = "#00CED1",
+                IsEnabled = true,
+                Keywords = new List<string> { "api", "backend", "http", "request" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Audio",
+                Color = "#9370DB",
+                IsEnabled = true,
+                Keywords = new List<string> { "audio", "music", "sound" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Debug",
+                Color = "#FF6347",
+                IsEnabled = true,
+                Keywords = new List<string> { "debug" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Event",
+                Color = "#DA70D6",
+                IsEnabled = true,
+                Keywords = new List<string> { "event", "eventbus", "publish", "subscribe" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Firebase",
+                Color = "#FFA500",
+                IsEnabled = true,
+                Keywords = new List<string> { "firebase" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Game",
+                Color = "#32CD32",
+                IsEnabled = true,
+                Keywords = new List<string> { "game" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Inputs",
+                Color = "#1E90FF",
+                IsEnabled = true,
+                Keywords = new List<string> { "device", "input", "inputs", "joystick", "key", "keyboard", "mouse", "touch" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Inventory",
+                Color = "#FFD700",
+                IsEnabled = true,
+                Keywords = new List<string> { "accessory", "accessories", "inventory", "item", "items", "pickup", "pickups", "supply", "supplies" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Network",
+                Color = "#4A90D9",
+                IsEnabled = true,
+                Keywords = new List<string> { "client", "host", "lobby", "mirror", "network", "relay", "server", "session" }
+            },
+            new CategoryData
+            {
+                CategoryId = "Player",
+                Color = "#ADFF2F",
+                IsEnabled = true,
+                Keywords = new List<string> { "character", "player" }
+            },
+            new CategoryData
+            {
+                CategoryId = "UI",
+                Color = "#FF69B4",
+                IsEnabled = true,
+                Keywords = new List<string> { "dialog", "hud", "menu", "overlay", "ui" }
+            }
+        };
+
+        private Dictionary<MxLogCategory, CategoryData> _categoryDataCache;
+        private Dictionary<string, MxLogCategory> _keywordToCategoryCache;
+
+        public bool IsCategoryEnabled(MxLogCategory category)
+        {
+            BuildCacheIfNeeded();
+            if (_categoryDataCache.TryGetValue(category, out var data))
+            {
+                return data.IsEnabled;
+            }
+            return true;
+        }
+
+        public string GetCategoryColor(MxLogCategory category)
+        {
+            BuildCacheIfNeeded();
+            if (_categoryDataCache.TryGetValue(category, out var data))
+            {
+                return data.Color;
+            }
+            return "#FFFFFF";
+        }
+
+        public MxLogCategory DetectCategoryFromKeyword(string keyword)
+        {
+            BuildCacheIfNeeded();
+            if (_keywordToCategoryCache.TryGetValue(keyword.ToLowerInvariant(), out var category))
+            {
+                return category;
+            }
+            return MxLogCategory.Default;
+        }
+
+        public void RegisterCustomCategory(MxLogCategory category, string color = null, List<string> keywords = null)
+        {
+            if (Categories.Any(c => c.CategoryId == category.Id))
+            {
+                return;
+            }
+
+            Categories.Add(new CategoryData
+            {
+                CategoryId = category.Id,
+                Color = color ?? "#FFFFFF",
+                IsEnabled = true,
+                Keywords = keywords ?? new List<string>()
+            });
+
+            ClearCache();
+        }
+
+        private void BuildCacheIfNeeded()
+        {
+            if (_categoryDataCache != null) return;
+
+            _categoryDataCache = new Dictionary<MxLogCategory, CategoryData>();
+            _keywordToCategoryCache = new Dictionary<string, MxLogCategory>();
+
+            foreach (CategoryData data in Categories)
+            {
+                MxLogCategory category = GetBuiltInCategory(data.CategoryId) ?? MxLogCategoryRegistry.Register(data.CategoryId);
+
+                _categoryDataCache[category] = data;
+
+                foreach (string keyword in data.Keywords)
+                {
+                    _keywordToCategoryCache[keyword.ToLowerInvariant()] = category;
+                }
             }
         }
 
-        public Dictionary<MxLogCategory, string> ColorsDict
+        private static MxLogCategory GetBuiltInCategory(string id)
         {
-            get
+            return id switch
             {
-                if (_colorsCache != null) return _colorsCache;
-
-                _colorsCache = new Dictionary<MxLogCategory, string>();
-                foreach (CategoryColor cc in CategoryColors)
-                {
-                    _colorsCache[cc.Category] = cc.Color;
-                }
-                return _colorsCache;
-            }
-        }
-
-        public Dictionary<string, MxLogCategory> KeywordsDict
-        {
-            get
-            {
-                if (_keywordsCache != null) return _keywordsCache;
-
-                _keywordsCache = new Dictionary<string, MxLogCategory>();
-                foreach (CategoryKeyword ck in CategoryKeywords)
-                {
-                    _keywordsCache[ck.Keyword.ToLowerInvariant()] = ck.Category;
-                }
-                return _keywordsCache;
-            }
+                "Default" => MxLogCategory.Default,
+                "API" => MxLogCategory.API,
+                "Audio" => MxLogCategory.Audio,
+                "Debug" => MxLogCategory.Debug,
+                "Event" => MxLogCategory.Event,
+                "Firebase" => MxLogCategory.Firebase,
+                "Game" => MxLogCategory.Game,
+                "Inputs" => MxLogCategory.Inputs,
+                "Inventory" => MxLogCategory.Inventory,
+                "Network" => MxLogCategory.Network,
+                "Player" => MxLogCategory.Player,
+                "Session" => MxLogCategory.Session,
+                "UI" => MxLogCategory.UI,
+                _ => null
+            };
         }
 
         public void ClearCache()
         {
-            _disabledCategoriesCache = null;
-            _colorsCache = null;
-            _keywordsCache = null;
+            _categoryDataCache = null;
+            _keywordToCategoryCache = null;
         }
 
         private void OnValidate()

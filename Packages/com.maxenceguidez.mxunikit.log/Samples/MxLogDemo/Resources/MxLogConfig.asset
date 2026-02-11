@@ -1,0 +1,111 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9bc9807bbac44f741aad20aff522896a, type: 3}
+  m_Name: MxLogConfig
+  m_EditorClassIdentifier: MaxenceGuidez.MxUnikit.Log::MxUnikit.Log.MxLogConfig
+  IsEnabled: 1
+  LogStackTraceForExceptions: 1
+  Categories:
+  - CategoryId: Default
+    Color: '#FFFFFF'
+    IsEnabled: 1
+    Keywords: []
+  - CategoryId: API
+    Color: '#00CED1'
+    IsEnabled: 1
+    Keywords:
+    - api
+    - backend
+    - http
+    - request
+  - CategoryId: Audio
+    Color: '#9370DB'
+    IsEnabled: 1
+    Keywords:
+    - audio
+    - music
+    - sound
+  - CategoryId: Debug
+    Color: '#FF6347'
+    IsEnabled: 1
+    Keywords:
+    - debug
+  - CategoryId: Event
+    Color: '#DA70D6'
+    IsEnabled: 1
+    Keywords:
+    - event
+    - eventbus
+    - publish
+    - subscribe
+  - CategoryId: Firebase
+    Color: '#FFA500'
+    IsEnabled: 1
+    Keywords:
+    - firebase
+  - CategoryId: Game
+    Color: '#32CD32'
+    IsEnabled: 1
+    Keywords:
+    - game
+  - CategoryId: Inputs
+    Color: '#1E90FF'
+    IsEnabled: 1
+    Keywords:
+    - device
+    - input
+    - inputs
+    - joystick
+    - key
+    - keyboard
+    - mouse
+    - touch
+  - CategoryId: Inventory
+    Color: '#FFD700'
+    IsEnabled: 1
+    Keywords:
+    - accessory
+    - accessories
+    - inventory
+    - item
+    - items
+    - pickup
+    - pickups
+    - supply
+    - supplies
+  - CategoryId: Network
+    Color: '#4A90D9'
+    IsEnabled: 1
+    Keywords:
+    - client
+    - host
+    - lobby
+    - mirror
+    - network
+    - relay
+    - server
+    - session
+  - CategoryId: Player
+    Color: '#ADFF2F'
+    IsEnabled: 1
+    Keywords:
+    - character
+    - player
+  - CategoryId: UI
+    Color: '#FF69B4'
+    IsEnabled: 1
+    Keywords:
+    - dialog
+    - hud
+    - menu
+    - overlay
+    - ui

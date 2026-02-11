@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.maxenceguidez.mxunikit.core": {
-      "version": "file:com.maxenceguidez.mxunikit.core",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {}
-    },
     "com.maxenceguidez.mxunikit.debug": {
       "version": "file:com.maxenceguidez.mxunikit.debug",
       "depth": 0,
@@ -22,9 +16,7 @@
       "version": "file:com.maxenceguidez.mxunikit.i18n",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {
-        "com.maxenceguidez.mxunikit.core": "0.0.0"
-      }
+      "dependencies": {}
     },
     "com.maxenceguidez.mxunikit.log": {
       "version": "file:com.maxenceguidez.mxunikit.log",

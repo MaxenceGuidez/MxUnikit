@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -8,101 +7,12 @@ using Debug = UnityEngine.Debug;
 
 namespace MxUnikit.Log
 {
-    public enum MxLogCategory
-    {
-        Default,
-
-        API,
-        Audio,
-        Debug,
-        Event,
-        Firebase,
-        Game,
-        Inputs,
-        Inventory,
-        Network,
-        Player,
-        Session,
-        UI
-    }
-
     public static class MxLog
     {
         private static MxLogConfig Config => MxLogConfig.Instance;
 
         private static bool IsEnabled => Config == null || Config.IsEnabled;
         private static bool LogStackTraceForExceptions => Config == null || Config.LogStackTraceForExceptions;
-
-        private static readonly HashSet<MxLogCategory> _defaultDisabledCategories = new HashSet<MxLogCategory>();
-
-        private static readonly Dictionary<MxLogCategory, string> _defaultColors = new Dictionary<MxLogCategory, string>
-        {
-            { MxLogCategory.API, "#00CED1" },
-            { MxLogCategory.Audio, "#9370DB" },
-            { MxLogCategory.Debug, "#FF6347" },
-            { MxLogCategory.Event, "#DA70D6" },
-            { MxLogCategory.Firebase, "#FFA500" },
-            { MxLogCategory.Game, "#32CD32" },
-            { MxLogCategory.Inputs, "#1E90FF" },
-            { MxLogCategory.Inventory, "#FFD700" },
-            { MxLogCategory.Network, "#4A90D9" },
-            { MxLogCategory.Player, "#ADFF2F" },
-            { MxLogCategory.UI, "#FF69B4" }
-        };
-
-        private static readonly Dictionary<string, MxLogCategory> _defaultKeywords = new Dictionary<string, MxLogCategory>
-        {
-            { "api", MxLogCategory.API },
-            { "backend", MxLogCategory.API },
-            { "http", MxLogCategory.API },
-            { "request", MxLogCategory.API },
-            { "audio", MxLogCategory.Audio },
-            { "music", MxLogCategory.Audio },
-            { "sound", MxLogCategory.Audio },
-            { "debug", MxLogCategory.Debug },
-            { "event", MxLogCategory.Event },
-            { "eventbus", MxLogCategory.Event },
-            { "publish", MxLogCategory.Event },
-            { "subscribe", MxLogCategory.Event },
-            { "firebase", MxLogCategory.Firebase },
-            { "game", MxLogCategory.Game },
-            { "device", MxLogCategory.Inputs },
-            { "input", MxLogCategory.Inputs },
-            { "inputs", MxLogCategory.Inputs },
-            { "joystick", MxLogCategory.Inputs },
-            { "key", MxLogCategory.Inputs },
-            { "keyboard", MxLogCategory.Inputs },
-            { "mouse", MxLogCategory.Inputs },
-            { "touch", MxLogCategory.Inputs },
-            { "accessory", MxLogCategory.Inventory },
-            { "accessories", MxLogCategory.Inventory },
-            { "inventory", MxLogCategory.Inventory },
-            { "item", MxLogCategory.Inventory },
-            { "items", MxLogCategory.Inventory },
-            { "pickup", MxLogCategory.Inventory },
-            { "pickups", MxLogCategory.Inventory },
-            { "supply", MxLogCategory.Inventory },
-            { "supplies", MxLogCategory.Inventory },
-            { "client", MxLogCategory.Network },
-            { "host", MxLogCategory.Network },
-            { "lobby", MxLogCategory.Network },
-            { "mirror", MxLogCategory.Network },
-            { "network", MxLogCategory.Network },
-            { "relay", MxLogCategory.Network },
-            { "server", MxLogCategory.Network },
-            { "session", MxLogCategory.Network },
-            { "character", MxLogCategory.Player },
-            { "player", MxLogCategory.Player },
-            { "dialog", MxLogCategory.UI },
-            { "hud", MxLogCategory.UI },
-            { "menu", MxLogCategory.UI },
-            { "overlay", MxLogCategory.UI },
-            { "ui", MxLogCategory.UI }
-        };
-
-        private static HashSet<MxLogCategory> DisabledCategories => Config != null ? Config.DisabledCategoriesSet : _defaultDisabledCategories;
-        private static Dictionary<MxLogCategory, string> Colors => Config != null ? Config.ColorsDict : _defaultColors;
-        private static Dictionary<string, MxLogCategory> Keywords => Config != null ? Config.KeywordsDict : _defaultKeywords;
 
         #region Public API
 
@@ -119,16 +29,17 @@ namespace MxUnikit.Log
 
         #region Internal
 
-        private static void LogInternal(string message, MxLogCategory? category, LogType type)
+        private static void LogInternal(string message, MxLogCategory category, LogType type)
         {
             if (!IsEnabled) return;
 
             (string className, string methodName) = GetCallerInfo();
             MxLogCategory cat = category ?? DetectCategory(className, methodName, message);
 
-            if (DisabledCategories.Contains(cat)) return;
+            if (Config != null && !Config.IsCategoryEnabled(cat)) return;
 
-            bool hasColor = Colors.TryGetValue(cat, out string color);
+            string color = Config?.GetCategoryColor(cat);
+            bool hasColor = !string.IsNullOrEmpty(color);
 
             string formatted = hasColor
                 ? $"[<color={color}>{className}</color>] - <color={color}>{methodName}()</color> : {message}"
@@ -186,19 +97,31 @@ namespace MxUnikit.Log
             }
 
             string source = $"{className} {methodName} {message}".ToLowerInvariant();
-            return (from kvp in Keywords where source.Contains(kvp.Key) select kvp.Value).FirstOrDefault();
+            string[] words = source.Split(new[] { ' ', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
+
+            foreach (string word in words)
+            {
+                MxLogCategory category = Config?.DetectCategoryFromKeyword(word);
+                if (category != null && category != MxLogCategory.Default)
+                {
+                    return category;
+                }
+            }
+
+            return MxLogCategory.Default;
         }
 
-        private static void LogException(Exception ex, string additionalMessage, MxLogCategory? category)
+        private static void LogException(Exception ex, string additionalMessage, MxLogCategory category)
         {
             if (!IsEnabled || ex == null) return;
 
             (string className, string methodName) = GetCallerInfo();
             MxLogCategory cat = category ?? DetectCategory(className, methodName, additionalMessage);
 
-            if (DisabledCategories.Contains(cat)) return;
+            if (Config != null && !Config.IsCategoryEnabled(cat)) return;
 
-            bool hasColor = Colors.TryGetValue(cat, out string color);
+            string color = Config?.GetCategoryColor(cat);
+            bool hasColor = !string.IsNullOrEmpty(color);
 
             string header = hasColor
                 ? $"[<color={color}>{className}</color>] - <color={color}>{methodName}()</color>"
