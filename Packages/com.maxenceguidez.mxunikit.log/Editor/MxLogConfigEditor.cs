@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditorInternal;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace MxUnikit.Log.Editor
         private SerializedProperty _categories;
 
         private ReorderableList _categoriesList;
+        private readonly Dictionary<int, bool> _expandedKeywords = new Dictionary<int, bool>();
 
         private bool _showGeneralSettings = true;
         private bool _showCategories = true;
@@ -46,9 +48,9 @@ namespace MxUnikit.Log.Editor
             {
                 drawHeaderCallback = rect =>
                 {
-                    float idWidth = rect.width * 0.18f;
-                    float colorWidth = rect.width * 0.18f;
-                    float enabledWidth = rect.width * 0.12f;
+                    float idWidth = rect.width * 0.25f;
+                    float colorWidth = rect.width * 0.20f;
+                    float enabledWidth = rect.width * 0.15f;
                     float keywordsWidth = rect.width * 0.40f;
 
                     EditorGUI.LabelField(new Rect(rect.x, rect.y, idWidth, rect.height), "Category ID", EditorStyles.boldLabel);
@@ -64,14 +66,16 @@ namespace MxUnikit.Log.Editor
                     SerializedProperty isEnabled = element.FindPropertyRelative("IsEnabled");
                     SerializedProperty keywords = element.FindPropertyRelative("Keywords");
 
-                    rect.y += 2;
-                    float idWidth = rect.width * 0.18f;
-                    float colorWidth = rect.width * 0.18f;
-                    float enabledWidth = rect.width * 0.12f;
+                    const float yOffset = 2;
+                    float currentY = rect.y + yOffset;
+
+                    float idWidth = rect.width * 0.25f;
+                    float colorWidth = rect.width * 0.20f;
+                    float enabledWidth = rect.width * 0.15f;
                     float keywordsWidth = rect.width * 0.40f;
 
                     EditorGUI.PropertyField(
-                        new Rect(rect.x, rect.y, idWidth - 5, EditorGUIUtility.singleLineHeight),
+                        new Rect(rect.x, currentY, idWidth - 5, EditorGUIUtility.singleLineHeight),
                         categoryId,
                         GUIContent.none
                     );
@@ -85,7 +89,7 @@ namespace MxUnikit.Log.Editor
 
                     EditorGUI.BeginChangeCheck();
                     Color newColor = EditorGUI.ColorField(
-                        new Rect(rect.x + idWidth, rect.y, colorWidth - 5, EditorGUIUtility.singleLineHeight),
+                        new Rect(rect.x + idWidth, currentY, colorWidth - 5, EditorGUIUtility.singleLineHeight),
                         GUIContent.none,
                         currentColor,
                         true,
@@ -99,16 +103,83 @@ namespace MxUnikit.Log.Editor
                     }
 
                     EditorGUI.PropertyField(
-                        new Rect(rect.x + idWidth + colorWidth, rect.y, enabledWidth - 5, EditorGUIUtility.singleLineHeight),
+                        new Rect(rect.x + idWidth + colorWidth, currentY, enabledWidth - 5, EditorGUIUtility.singleLineHeight),
                         isEnabled,
                         GUIContent.none
                     );
 
-                    EditorGUI.PropertyField(
-                        new Rect(rect.x + idWidth + colorWidth + enabledWidth, rect.y, keywordsWidth - 5, EditorGUIUtility.singleLineHeight),
-                        keywords,
-                        GUIContent.none
+                    bool isExpanded = _expandedKeywords.ContainsKey(index) && _expandedKeywords[index];
+                    int keywordCount = keywords.arraySize;
+
+                    float buttonX = rect.x + idWidth + colorWidth + enabledWidth;
+                    const float buttonWidth = 80;
+
+                    if (GUI.Button(
+                        new Rect(buttonX, currentY, buttonWidth, EditorGUIUtility.singleLineHeight),
+                        $"{keywordCount} keyword{(keywordCount != 1 ? "s" : "")}",
+                        EditorStyles.miniButton))
+                    {
+                        _expandedKeywords[index] = !isExpanded;
+                    }
+
+                    if (!isExpanded) return;
+
+                    currentY += EditorGUIUtility.singleLineHeight + 4;
+
+                    float keywordsBoxX = rect.x + idWidth + colorWidth + enabledWidth;
+                    float keywordsBoxWidth = keywordsWidth - 5;
+
+                    Rect keywordsRect = new Rect(keywordsBoxX, currentY, keywordsBoxWidth,
+                        (keywordCount + 1) * (EditorGUIUtility.singleLineHeight + 2) + 10);
+
+                    GUI.Box(keywordsRect, "", EditorStyles.helpBox);
+
+                    currentY += 5;
+
+                    for (int i = 0; i < keywordCount; i++)
+                    {
+                        SerializedProperty keyword = keywords.GetArrayElementAtIndex(i);
+
+                        const float deleteButtonWidth = 20;
+                        Rect keywordFieldRect = new Rect(
+                            keywordsBoxX + 5,
+                            currentY,
+                            keywordsBoxWidth - deleteButtonWidth - 10,
+                            EditorGUIUtility.singleLineHeight
+                        );
+
+                        EditorGUI.PropertyField(keywordFieldRect, keyword, GUIContent.none);
+
+                        Rect deleteButtonRect = new Rect(
+                            keywordsBoxX + keywordsBoxWidth - deleteButtonWidth - 5,
+                            currentY,
+                            deleteButtonWidth,
+                            EditorGUIUtility.singleLineHeight
+                        );
+
+                        if (GUI.Button(deleteButtonRect, "×", EditorStyles.miniButton))
+                        {
+                            keywords.DeleteArrayElementAtIndex(i);
+                            serializedObject.ApplyModifiedProperties();
+                            return;
+                        }
+
+                        currentY += EditorGUIUtility.singleLineHeight + 2;
+                    }
+
+                    Rect addButtonRect = new Rect(
+                        keywordsBoxX + 5,
+                        currentY,
+                        keywordsBoxWidth - 10,
+                        EditorGUIUtility.singleLineHeight
                     );
+
+                    if (GUI.Button(addButtonRect, "+ Add Keyword", EditorStyles.miniButton))
+                    {
+                        keywords.arraySize++;
+                        keywords.GetArrayElementAtIndex(keywords.arraySize - 1).stringValue = "";
+                        serializedObject.ApplyModifiedProperties();
+                    }
                 },
                 elementHeightCallback = index =>
                 {
@@ -117,10 +188,12 @@ namespace MxUnikit.Log.Editor
 
                     float baseHeight = EditorGUIUtility.singleLineHeight + 4;
 
-                    if (!keywords.isExpanded) return baseHeight;
+                    bool isExpanded = _expandedKeywords.ContainsKey(index) && _expandedKeywords[index];
+
+                    if (!isExpanded) return baseHeight;
 
                     int keywordCount = keywords.arraySize;
-                    float keywordsHeight = (keywordCount + 2) * (EditorGUIUtility.singleLineHeight + 2);
+                    float keywordsHeight = (keywordCount + 1) * (EditorGUIUtility.singleLineHeight + 2) + 20;
 
                     return baseHeight + keywordsHeight;
                 }
@@ -155,7 +228,7 @@ namespace MxUnikit.Log.Editor
 
             EditorGUILayout.HelpBox(
                 "Categories define how logs are organized and displayed. Each category has a unique ID, color, and keywords for auto-detection.\n" +
-                "Keywords are used to automatically detect the category based on class name, method name, or message content.",
+                "Click the keyword count button to expand and edit keywords for each category.",
                 MessageType.Info
             );
 
