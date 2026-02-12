@@ -1,7 +1,7 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
+using System.Text;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
@@ -14,26 +14,46 @@ namespace MxUnikit.Log
         private static bool IsEnabled => Config == null || Config.IsEnabled;
         private static bool LogStackTraceForExceptions => Config == null || Config.LogStackTraceForExceptions;
 
+        [ThreadStatic] private static StringBuilder _stringBuilder;
+
         #region Public API
 
-        public static void L(string message) => LogInternal(message, null, LogType.Log);
+        public static void L(string message) => LogInternal(message, null, null, LogType.Log);
 
-        public static void W(string message) => LogInternal(message, null, LogType.Warning);
+        public static void W(string message) => LogInternal(message, null, null, LogType.Warning);
 
-        public static void E(string message) => LogInternal(message, null, LogType.Error);
+        public static void E(string message) => LogInternal(message, null, null, LogType.Error);
 
-        public static void Ex(Exception ex) => LogException(ex, null, null);
-        public static void Ex(string message, Exception ex) => LogException(ex, message, null);
+        public static void Ex(Exception ex) => LogInternal(null, null, ex, LogType.Exception);
+        public static void Ex(string message, Exception ex) => LogInternal(message, null, ex, LogType.Exception);
 
         #endregion
 
-        #region Internal
-
-        private static void LogInternal(string message, MxLogCategory category, LogType type)
+        private static void LogInternal(string message, MxLogCategory category, Exception ex, LogType type)
         {
             if (!IsEnabled) return;
+            if (ex == null && string.IsNullOrEmpty(message)) return;
 
-            (string className, string methodName) = GetCallerInfo();
+            StackTrace stackTrace = new StackTrace(2, true);
+            StackFrame callerFrame = stackTrace.GetFrame(0);
+
+            if (callerFrame == null) return;
+
+            MethodBase method = callerFrame.GetMethod();
+            if (method == null) return;
+
+            string className = method.DeclaringType?.Name ?? "Unknown";
+            string methodName = method.Name;
+
+            if (methodName.StartsWith("<"))
+            {
+                int endIndex = methodName.IndexOf('>');
+                if (endIndex > 1)
+                {
+                    methodName = methodName[1..endIndex];
+                }
+            }
+
             MxLogCategory cat = category ?? DetectCategory(className, methodName, message);
 
             if (Config != null && !Config.IsCategoryEnabled(cat)) return;
@@ -41,145 +61,167 @@ namespace MxUnikit.Log
             string color = Config?.GetCategoryColor(cat);
             bool hasColor = !string.IsNullOrEmpty(color);
 
-            string formatted = hasColor
-                ? $"[<color={color}>{className}</color>] - <color={color}>{methodName}()</color> : {message}"
-                : $"[{className}] - {methodName}() : {message}";
+            StringBuilder sb = GetStringBuilder();
 
-            string customStackTrace = BuildCustomStackTrace();
-
-            switch (type)
+            if (hasColor)
             {
-                case LogType.Log:
-                    Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
-                    break;
-                case LogType.Warning:
-                    Debug.LogFormat(LogType.Warning, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
-                    break;
-                case LogType.Error:
-                    Debug.LogFormat(LogType.Error, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
-                    break;
-                case LogType.Assert:
-                    Debug.LogFormat(LogType.Assert, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
-                    break;
-                case LogType.Exception:
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                sb.Append("[<color=").Append(color).Append('>').Append(className)
+                  .Append("</color>] - <color=").Append(color).Append('>')
+                  .Append(methodName).Append("()</color>");
             }
+            else
+            {
+                sb.Append('[').Append(className).Append("] - ").Append(methodName).Append("()");
+            }
+
+            if (ex != null)
+            {
+                if (!string.IsNullOrEmpty(message))
+                {
+                    sb.Append(" : ").Append(message).Append('\n');
+                }
+                else
+                {
+                    sb.Append('\n');
+                }
+
+                sb.Append("<color=#FF0000>").Append(ex.GetType().Name)
+                  .Append("</color>: ").Append(ex.Message);
+
+                if (LogStackTraceForExceptions && !string.IsNullOrEmpty(ex.StackTrace))
+                {
+                    sb.Append('\n').Append(ex.StackTrace);
+                }
+
+                if (ex.InnerException != null)
+                {
+                    sb.Append("\n---> Inner Exception: <color=#FF4500>")
+                      .Append(ex.InnerException.GetType().Name)
+                      .Append("</color>: ").Append(ex.InnerException.Message);
+
+                    if (LogStackTraceForExceptions && !string.IsNullOrEmpty(ex.InnerException.StackTrace))
+                    {
+                        sb.Append('\n').Append(ex.InnerException.StackTrace);
+                    }
+                }
+            }
+            else
+            {
+                sb.Append(" : ").Append(message);
+            }
+
+            sb.Append("\n\n");
+            BuildCustomStackTrace(sb, stackTrace);
+
+            Debug.LogFormat(type, LogOption.NoStacktrace, null, sb.ToString());
         }
 
-        private static string BuildCustomStackTrace()
+        #region Utils
+
+        private static void BuildCustomStackTrace(StringBuilder sb, StackTrace stackTrace)
         {
-            StackTrace stackTrace = new StackTrace(3, true);
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            int initialLength = sb.Length;
 
             for (int i = 0; i < stackTrace.FrameCount; i++)
             {
                 StackFrame frame = stackTrace.GetFrame(i);
-                MethodBase method = frame.GetMethod();
+                MethodBase method = frame?.GetMethod();
 
                 if (method == null) continue;
 
                 string fileName = frame.GetFileName();
-                int lineNumber = frame.GetFileLineNumber();
-
                 if (string.IsNullOrEmpty(fileName)) continue;
 
-                fileName = fileName.Replace('\\', '/');
+                int lineNumber = frame.GetFileLineNumber();
 
-                string typeName = method.DeclaringType?.FullName ?? "Unknown";
-                string methodName = method.Name;
+                sb.Append(method.DeclaringType?.FullName ?? "Unknown")
+                  .Append(':').Append(method.Name)
+                  .Append("\t\t(<a href=\"");
 
-                sb.Append($"{typeName}:{methodName}\t\t(<a href=\"{fileName}\" line=\"{lineNumber}\">{fileName}:{lineNumber}</a>)\n");
+                int fileNameStart = sb.Length;
+                sb.Append(fileName);
+
+                for (int j = fileNameStart; j < sb.Length; j++)
+                {
+                    if (sb[j] == '\\') sb[j] = '/';
+                }
+
+                sb.Append("\" line=\"").Append(lineNumber).Append("\">")
+                  .Append(fileName, 0, fileName.Length);
+
+                for (int j = sb.Length - fileName.Length; j < sb.Length; j++)
+                {
+                    if (sb[j] == '\\') sb[j] = '/';
+                }
+
+                sb.Append(':').Append(lineNumber).Append("</a>)\n");
             }
 
-            return sb.ToString().TrimEnd();
-        }
-
-        private static (string className, string methodName) GetCallerInfo()
-        {
-            StackTrace stackTrace = new StackTrace(3, false);
-            StackFrame frame = stackTrace.GetFrame(0);
-
-            if (frame == null) return ("Unknown", "Unknown");
-
-            MethodBase method = frame.GetMethod();
-            if (method == null) return ("Unknown", "Unknown");
-
-            string className = method.DeclaringType?.Name ?? "Unknown";
-            string methodName = method.Name;
-
-            if (!methodName.StartsWith("<")) return (className, methodName);
-
-            int endIndex = methodName.IndexOf('>');
-            if (endIndex > 1)
+            if (sb.Length > initialLength && sb[^1] == '\n')
             {
-                methodName = methodName[1..endIndex];
+                sb.Length--;
             }
-
-            return (className, methodName);
         }
 
         private static MxLogCategory DetectCategory(string className, string methodName, string message)
         {
-            if (string.IsNullOrEmpty(className) && string.IsNullOrEmpty(methodName) && string.IsNullOrEmpty(message))
+            if (Config == null || string.IsNullOrEmpty(className) && string.IsNullOrEmpty(methodName) &&
+                string.IsNullOrEmpty(message))
             {
                 return MxLogCategory.Default;
             }
 
-            string source = $"{className} {methodName} {message}".ToLowerInvariant();
-            string[] words = source.Split(new[] { ' ', '_', '-' }, StringSplitOptions.RemoveEmptyEntries);
+            MxLogCategory result = TryDetectFromString(className);
+            if (result != MxLogCategory.Default) return result;
 
-            foreach (string word in words)
+            result = TryDetectFromString(methodName);
+            if (result != MxLogCategory.Default) return result;
+
+            result = TryDetectFromString(message);
+            return result;
+        }
+
+        private static MxLogCategory TryDetectFromString(string text)
+        {
+            if (string.IsNullOrEmpty(text)) return MxLogCategory.Default;
+
+            int wordStart = 0;
+            int length = text.Length;
+
+            for (int i = 0; i <= length; i++)
             {
-                MxLogCategory category = Config?.DetectCategoryFromKeyword(word);
-                if (category != null && category != MxLogCategory.Default)
+                bool isDelimiter = i == length || text[i] == ' ' || text[i] == '_' || text[i] == '-';
+
+                if (!isDelimiter || i <= wordStart) continue;
+
+                int wordLength = i - wordStart;
+                if (wordLength > 0)
                 {
-                    return category;
+                    string word = text.Substring(wordStart, wordLength).ToLowerInvariant();
+                    MxLogCategory category = Config.DetectCategoryFromKeyword(word);
+                    if (category != null && category != MxLogCategory.Default)
+                    {
+                        return category;
+                    }
                 }
+                wordStart = i + 1;
             }
 
             return MxLogCategory.Default;
         }
 
-        private static void LogException(Exception ex, string additionalMessage, MxLogCategory category)
+        private static StringBuilder GetStringBuilder()
         {
-            if (!IsEnabled || ex == null) return;
-
-            (string className, string methodName) = GetCallerInfo();
-            MxLogCategory cat = category ?? DetectCategory(className, methodName, additionalMessage);
-
-            if (Config != null && !Config.IsCategoryEnabled(cat)) return;
-
-            string color = Config?.GetCategoryColor(cat);
-            bool hasColor = !string.IsNullOrEmpty(color);
-
-            string header = hasColor
-                ? $"[<color={color}>{className}</color>] - <color={color}>{methodName}()</color>"
-                : $"[{className}] - {methodName}()";
-
-            string exceptionType = ex.GetType().Name;
-            string exceptionMessage = ex.Message;
-
-            string formatted = additionalMessage != null
-                ? $"{header} : {additionalMessage}\n<color=#FF0000>{exceptionType}</color>: {exceptionMessage}"
-                : $"{header}\n<color=#FF0000>{exceptionType}</color>: {exceptionMessage}";
-
-            if (LogStackTraceForExceptions && !string.IsNullOrEmpty(ex.StackTrace))
+            if (_stringBuilder == null)
             {
-                formatted += $"\n{ex.StackTrace}";
+                _stringBuilder = new StringBuilder(512);
+            }
+            else
+            {
+                _stringBuilder.Clear();
             }
 
-            if (ex.InnerException != null)
-            {
-                formatted +=
-                    $"\n---> Inner Exception: <color=#FF4500>{ex.InnerException.GetType().Name}</color>: {ex.InnerException.Message}";
-                if (LogStackTraceForExceptions && !string.IsNullOrEmpty(ex.InnerException.StackTrace))
-                {
-                    formatted += $"\n{ex.InnerException.StackTrace}";
-                }
-            }
-
-            Debug.LogError(formatted);
+            return _stringBuilder;
         }
 
         #endregion
