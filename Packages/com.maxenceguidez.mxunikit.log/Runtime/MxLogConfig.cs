@@ -40,13 +40,6 @@ namespace MxUnikit.Log
         {
             new CategoryData
             {
-                CategoryId = "Default",
-                Color = "#FFFFFF",
-                IsEnabled = true,
-                Keywords = new List<string>()
-            },
-            new CategoryData
-            {
                 CategoryId = "API",
                 Color = "#00CED1",
                 IsEnabled = true,
@@ -129,14 +122,18 @@ namespace MxUnikit.Log
 
         public bool IsCategoryEnabled(MxLogCategory category)
         {
+            if (category == null) return true;
+
             BuildCacheIfNeeded();
             return !_categoryDataCache.TryGetValue(category, out CategoryData data) || data.IsEnabled;
         }
 
         public string GetCategoryColor(MxLogCategory category)
         {
+            if (category == null) return null;
+
             BuildCacheIfNeeded();
-            return _categoryDataCache.TryGetValue(category, out CategoryData data) ? data.Color : "#FFFFFF";
+            return _categoryDataCache.TryGetValue(category, out CategoryData data) ? data.Color : null;
         }
 
         public MxLogCategory DetectCategoryFromKeywordSegment(string text, int start, int length)
@@ -167,7 +164,7 @@ namespace MxUnikit.Log
                 if (match) return category;
             }
 
-            return MxLogCategory.Default;
+            return null;
         }
 
         public void RegisterCustomCategory(MxLogCategory category, string color = null, List<string> keywords = null)
@@ -209,7 +206,6 @@ namespace MxUnikit.Log
         {
             return id switch
             {
-                "Default" => MxLogCategory.Default,
                 "API" => MxLogCategory.API,
                 "Audio" => MxLogCategory.Audio,
                 "Debug" => MxLogCategory.Debug,

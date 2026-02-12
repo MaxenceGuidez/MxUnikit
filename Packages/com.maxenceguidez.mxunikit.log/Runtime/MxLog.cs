@@ -172,14 +172,14 @@ namespace MxUnikit.Log
             if (Config == null || string.IsNullOrEmpty(className) && string.IsNullOrEmpty(methodName) &&
                 string.IsNullOrEmpty(message))
             {
-                return MxLogCategory.Default;
+                return null;
             }
 
             MxLogCategory result = DetectCategory(className);
-            if (result != MxLogCategory.Default) return result;
+            if (result != null) return result;
 
             result = DetectCategory(methodName);
-            if (result != MxLogCategory.Default) return result;
+            if (result != null) return result;
 
             result = DetectCategory(message);
             return result;
@@ -187,7 +187,7 @@ namespace MxUnikit.Log
 
         private static MxLogCategory DetectCategory(string text)
         {
-            if (string.IsNullOrEmpty(text)) return MxLogCategory.Default;
+            if (string.IsNullOrEmpty(text)) return null;
 
             int wordStart = 0;
             int length = text.Length;
@@ -202,7 +202,7 @@ namespace MxUnikit.Log
                 if (wordLength > 0)
                 {
                     MxLogCategory category = Config.DetectCategoryFromKeywordSegment(text, wordStart, wordLength);
-                    if (category != null && category != MxLogCategory.Default)
+                    if (category != null)
                     {
                         return category;
                     }
@@ -210,7 +210,7 @@ namespace MxUnikit.Log
                 wordStart = i + 1;
             }
 
-            return MxLogCategory.Default;
+            return null;
         }
 
         private static StringBuilder GetStringBuilder()

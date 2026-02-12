@@ -11,7 +11,6 @@ namespace MxUnikit.Log
             Id = id;
         }
 
-        public static readonly MxLogCategory Default = new MxLogCategory("Default");
         public static readonly MxLogCategory API = new MxLogCategory("API");
         public static readonly MxLogCategory Audio = new MxLogCategory("Audio");
         public static readonly MxLogCategory Debug = new MxLogCategory("Debug");
