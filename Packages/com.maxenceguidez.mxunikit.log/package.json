@@ -1,6 +1,6 @@
 {
   "name": "com.maxenceguidez.mxunikit.log",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "displayName": "MxUnikit - Log",
   "description": "Provides a categorized logging utility with automatic caller detection and color-coded output.",
   "unity": "6000.3",
@@ -11,8 +11,8 @@
   },
   "samples": [
     {
-      "displayName": "Custom Categories Demo",
-      "description": "Demonstrates how to create and use custom log categories",
+      "displayName": "MxLog Demo",
+      "description": "Demonstrates how to create and use MxLog.",
       "path": "Samples/MxLogDemo"
     }
   ]
