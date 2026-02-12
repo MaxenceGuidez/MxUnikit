@@ -1,0 +1,16 @@
+{
+  "name": "MaxenceGuidez.MxUnikit.Log.Samples",
+  "rootNamespace": "MxUnikit.Log.Samples",
+  "references": [
+      "GUID:b68ce3f21e1127d4585c8b303958060f"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

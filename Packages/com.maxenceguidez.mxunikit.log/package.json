@@ -8,5 +8,12 @@
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
-  }
+  },
+  "samples": [
+    {
+      "displayName": "Custom Categories Demo",
+      "description": "Demonstrates how to create and use custom log categories",
+      "path": "Samples/MxLogDemo"
+    }
+  ]
 }

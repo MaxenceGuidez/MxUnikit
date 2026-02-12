@@ -163,23 +163,6 @@ namespace MxUnikit.Log.Editor
 
             _categoriesList.DoLayoutList();
 
-            EditorGUILayout.Space(10);
-
-            if (GUILayout.Button("Add Custom Category", GUILayout.Height(30)))
-            {
-                _categories.arraySize++;
-
-                SerializedProperty newElement = _categories.GetArrayElementAtIndex(_categories.arraySize - 1);
-                newElement.FindPropertyRelative("Id").stringValue = "CustomCategory";
-                newElement.FindPropertyRelative("Color").stringValue = "#FFFFFF";
-                newElement.FindPropertyRelative("IsEnabled").boolValue = true;
-
-                SerializedProperty keywords = newElement.FindPropertyRelative("Keywords");
-                keywords.ClearArray();
-
-                serializedObject.ApplyModifiedProperties();
-            }
-
             EditorGUILayout.EndVertical();
         }
 
