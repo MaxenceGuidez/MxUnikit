@@ -45,24 +45,54 @@ namespace MxUnikit.Log
                 ? $"[<color={color}>{className}</color>] - <color={color}>{methodName}()</color> : {message}"
                 : $"[{className}] - {methodName}() : {message}";
 
+            string customStackTrace = BuildCustomStackTrace();
+
             switch (type)
             {
                 case LogType.Log:
-                    Debug.Log(formatted);
+                    Debug.LogFormat(LogType.Log, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
                     break;
                 case LogType.Warning:
-                    Debug.LogWarning(formatted);
+                    Debug.LogFormat(LogType.Warning, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
                     break;
                 case LogType.Error:
-                    Debug.LogError(formatted);
+                    Debug.LogFormat(LogType.Error, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
                     break;
                 case LogType.Assert:
-                    Debug.LogAssertion(formatted);
+                    Debug.LogFormat(LogType.Assert, LogOption.NoStacktrace, null, "{0}\n\n{1}", formatted, customStackTrace);
                     break;
                 case LogType.Exception:
                 default:
                     throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
+        }
+
+        private static string BuildCustomStackTrace()
+        {
+            StackTrace stackTrace = new StackTrace(3, true);
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+
+            for (int i = 0; i < stackTrace.FrameCount; i++)
+            {
+                StackFrame frame = stackTrace.GetFrame(i);
+                MethodBase method = frame.GetMethod();
+
+                if (method == null) continue;
+
+                string fileName = frame.GetFileName();
+                int lineNumber = frame.GetFileLineNumber();
+
+                if (string.IsNullOrEmpty(fileName)) continue;
+
+                fileName = fileName.Replace('\\', '/');
+
+                string typeName = method.DeclaringType?.FullName ?? "Unknown";
+                string methodName = method.Name;
+
+                sb.Append($"{typeName}:{methodName}\t\t(<a href=\"{fileName}\" line=\"{lineNumber}\">{fileName}:{lineNumber}</a>)\n");
+            }
+
+            return sb.ToString().TrimEnd();
         }
 
         private static (string className, string methodName) GetCallerInfo()
