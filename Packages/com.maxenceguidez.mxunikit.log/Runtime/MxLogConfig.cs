@@ -130,39 +130,49 @@ namespace MxUnikit.Log
         public bool IsCategoryEnabled(MxLogCategory category)
         {
             BuildCacheIfNeeded();
-            if (_categoryDataCache.TryGetValue(category, out var data))
-            {
-                return data.IsEnabled;
-            }
-            return true;
+            return !_categoryDataCache.TryGetValue(category, out CategoryData data) || data.IsEnabled;
         }
 
         public string GetCategoryColor(MxLogCategory category)
         {
             BuildCacheIfNeeded();
-            if (_categoryDataCache.TryGetValue(category, out var data))
-            {
-                return data.Color;
-            }
-            return "#FFFFFF";
+            return _categoryDataCache.TryGetValue(category, out CategoryData data) ? data.Color : "#FFFFFF";
         }
 
-        public MxLogCategory DetectCategoryFromKeyword(string keyword)
+        public MxLogCategory DetectCategoryFromKeywordSegment(string text, int start, int length)
         {
             BuildCacheIfNeeded();
-            if (_keywordToCategoryCache.TryGetValue(keyword.ToLowerInvariant(), out var category))
+
+            foreach ((string keyword, MxLogCategory category) in _keywordToCategoryCache)
             {
-                return category;
+                if (keyword.Length != length) continue;
+
+                bool match = true;
+                for (int i = 0; i < length; i++)
+                {
+                    char c1 = text[start + i];
+                    char c2 = keyword[i];
+
+                    if (c1 is >= 'A' and <= 'Z')
+                    {
+                        c1 = (char)(c1 + 32);
+                    }
+
+                    if (c1 == c2) continue;
+
+                    match = false;
+                    break;
+                }
+
+                if (match) return category;
             }
+
             return MxLogCategory.Default;
         }
 
         public void RegisterCustomCategory(MxLogCategory category, string color = null, List<string> keywords = null)
         {
-            if (Categories.Any(c => c.CategoryId == category.Id))
-            {
-                return;
-            }
+            if (Categories.Any(c => c.CategoryId == category.Id)) return;
 
             Categories.Add(new CategoryData
             {

@@ -42,17 +42,7 @@ namespace MxUnikit.Log
             MethodBase method = callerFrame.GetMethod();
             if (method == null) return;
 
-            string className = method.DeclaringType?.Name ?? "Unknown";
-            string methodName = method.Name;
-
-            if (methodName.StartsWith("<"))
-            {
-                int endIndex = methodName.IndexOf('>');
-                if (endIndex > 1)
-                {
-                    methodName = methodName[1..endIndex];
-                }
-            }
+            ExtractMethodInfo(method, out string className, out string methodName);
 
             MxLogCategory cat = category ?? DetectCategory(className, methodName, message);
 
@@ -118,6 +108,20 @@ namespace MxUnikit.Log
 
         #region Utils
 
+        private static void ExtractMethodInfo(MethodBase method, out string className, out string methodName)
+        {
+            className = method.DeclaringType?.Name ?? "Unknown";
+            methodName = method.Name;
+
+            if (!methodName.StartsWith("<")) return;
+
+            int endIndex = methodName.IndexOf('>');
+            if (endIndex > 1)
+            {
+                methodName = methodName[1..endIndex];
+            }
+        }
+
         private static void BuildCustomStackTrace(StringBuilder sb, StackTrace stackTrace)
         {
             int initialLength = sb.Length;
@@ -171,17 +175,17 @@ namespace MxUnikit.Log
                 return MxLogCategory.Default;
             }
 
-            MxLogCategory result = TryDetectFromString(className);
+            MxLogCategory result = DetectCategory(className);
             if (result != MxLogCategory.Default) return result;
 
-            result = TryDetectFromString(methodName);
+            result = DetectCategory(methodName);
             if (result != MxLogCategory.Default) return result;
 
-            result = TryDetectFromString(message);
+            result = DetectCategory(message);
             return result;
         }
 
-        private static MxLogCategory TryDetectFromString(string text)
+        private static MxLogCategory DetectCategory(string text)
         {
             if (string.IsNullOrEmpty(text)) return MxLogCategory.Default;
 
@@ -197,8 +201,7 @@ namespace MxUnikit.Log
                 int wordLength = i - wordStart;
                 if (wordLength > 0)
                 {
-                    string word = text.Substring(wordStart, wordLength).ToLowerInvariant();
-                    MxLogCategory category = Config.DetectCategoryFromKeyword(word);
+                    MxLogCategory category = Config.DetectCategoryFromKeywordSegment(text, wordStart, wordLength);
                     if (category != null && category != MxLogCategory.Default)
                     {
                         return category;
