@@ -194,7 +194,7 @@ namespace MxUnikit.Log
 
             foreach (CategoryData data in Categories)
             {
-                MxLogCategory category = GetBuiltInCategory(data.CategoryId) ?? MxLogCategoryRegistry.Register(data.CategoryId);
+                MxLogCategory category = GetBuiltInCategory(data.CategoryId) ?? MxLogCategory.Create(data.CategoryId);
 
                 _categoryDataCache[category] = data;
 
