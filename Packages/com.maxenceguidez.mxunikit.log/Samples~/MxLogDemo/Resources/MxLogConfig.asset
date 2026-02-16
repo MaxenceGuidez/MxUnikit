@@ -15,6 +15,12 @@ MonoBehaviour:
   IsEnabled: 1
   LogStackTraceForExceptions: 1
   Categories:
+  - CategoryId: UI
+    Color: '#7BC560'
+    IsEnabled: 1
+    Keywords:
+    - ui
+    - menu
   - CategoryId: Gameplay
     Color: '#D4994F'
     IsEnabled: 1

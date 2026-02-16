@@ -136,32 +136,18 @@ namespace MxUnikit.Log
             return _categoryDataCache.TryGetValue(category, out CategoryData data) ? data.Color : null;
         }
 
-        public MxLogCategory DetectCategoryFromKeywordSegment(string text, int start, int length)
+        public MxLogCategory DetectCategory(string text)
         {
+            if (string.IsNullOrEmpty(text)) return null;
+
             BuildCacheIfNeeded();
 
             foreach ((string keyword, MxLogCategory category) in _keywordToCategoryCache)
             {
-                if (keyword.Length != length) continue;
-
-                bool match = true;
-                for (int i = 0; i < length; i++)
+                if (text.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                 {
-                    char c1 = text[start + i];
-                    char c2 = keyword[i];
-
-                    if (c1 is >= 'A' and <= 'Z')
-                    {
-                        c1 = (char)(c1 + 32);
-                    }
-
-                    if (c1 == c2) continue;
-
-                    match = false;
-                    break;
+                    return category;
                 }
-
-                if (match) return category;
             }
 
             return null;

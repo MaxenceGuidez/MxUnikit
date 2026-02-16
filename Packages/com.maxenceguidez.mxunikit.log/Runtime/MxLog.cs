@@ -169,48 +169,16 @@ namespace MxUnikit.Log
 
         private static MxLogCategory DetectCategory(string className, string methodName, string message)
         {
-            if (Config == null || string.IsNullOrEmpty(className) && string.IsNullOrEmpty(methodName) &&
-                string.IsNullOrEmpty(message))
-            {
-                return null;
-            }
+            if (Config == null) return null;
 
-            MxLogCategory result = DetectCategory(className);
+            MxLogCategory result = Config.DetectCategory(className);
             if (result != null) return result;
 
-            result = DetectCategory(methodName);
+            result = Config.DetectCategory(methodName);
             if (result != null) return result;
 
-            result = DetectCategory(message);
+            result = Config.DetectCategory(message);
             return result;
-        }
-
-        private static MxLogCategory DetectCategory(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return null;
-
-            int wordStart = 0;
-            int length = text.Length;
-
-            for (int i = 0; i <= length; i++)
-            {
-                bool isDelimiter = i == length || text[i] == ' ' || text[i] == '_' || text[i] == '-';
-
-                if (!isDelimiter || i <= wordStart) continue;
-
-                int wordLength = i - wordStart;
-                if (wordLength > 0)
-                {
-                    MxLogCategory category = Config.DetectCategoryFromKeywordSegment(text, wordStart, wordLength);
-                    if (category != null)
-                    {
-                        return category;
-                    }
-                }
-                wordStart = i + 1;
-            }
-
-            return null;
         }
 
         private static StringBuilder GetStringBuilder()
