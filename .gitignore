@@ -103,7 +103,11 @@ InitTestScene*.unity*
 .vscode/
 
 # Ignored folder
-/[Aa]ssets/[Ii]gnored
+/[Aa]ssets/[Ii]gnored/
+
+# Test Samples
+/[Aa]ssets/[Ss]amples/
+/[Aa]ssets/[Ss]amples.meta
 
 # Claude Code
 .claude/
