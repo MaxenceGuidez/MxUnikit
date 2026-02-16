@@ -13,7 +13,7 @@
     {
       "displayName": "Basic Validation",
       "description": "Example script demonstrating RequiredFieldAttribute usage and validation tests.",
-      "path": "Samples/BasicValidation"
+      "path": "Samples~/BasicValidation"
     }
   ]
 }

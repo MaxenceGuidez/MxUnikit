@@ -13,7 +13,7 @@
     {
       "displayName": "MxLog Demo",
       "description": "Demonstrates how to create and use MxLog.",
-      "path": "Samples/MxLogDemo"
+      "path": "Samples~/MxLogDemo"
     }
   ]
 }

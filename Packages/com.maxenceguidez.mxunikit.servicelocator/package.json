@@ -13,7 +13,7 @@
     {
       "displayName": "MxServiceLocator Demo",
       "description": "Complete demonstration of service registration, resolution, and MonoBehaviour services using the IService interface.",
-      "path": "Samples/MxServiceLocatorDemo"
+      "path": "Samples~/MxServiceLocatorDemo"
     }
   ]
 }

@@ -11,11 +11,5 @@
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
-  },
-  "samples": [
-    {
-      "displayName": "Sample 1",
-      "path": "Samples~/Sample1"
-    }
-  ]
+  }
 }
