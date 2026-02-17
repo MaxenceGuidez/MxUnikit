@@ -61,7 +61,7 @@ namespace MxUnikit.Tests.Editor
         private static List<ValidationException> ValidateAllPrefabs()
         {
             List<ValidationException> exceptions = new List<ValidationException>();
-            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab");
+            string[] prefabGuids = AssetDatabase.FindAssets("t:Prefab", new[] { "Assets" });
 
             foreach (string guid in prefabGuids)
             {
@@ -87,7 +87,7 @@ namespace MxUnikit.Tests.Editor
 
             Scene currentScene = SceneManager.GetActiveScene();
             string currentScenePath = currentScene.path;
-            string[] sceneGuids = AssetDatabase.FindAssets("t:Scene");
+            string[] sceneGuids = AssetDatabase.FindAssets("t:Scene", new[] { "Assets" });
 
             foreach (string guid in sceneGuids)
             {
