@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.provider",
   "version": "0.2.0",
   "displayName": "MxUnikit - Provider",
-  "description": "Provides a lightweight provider (service locator) for registering and resolving services and managers by type, with explicit registration and shutdown-aware resolution.",
+  "description": "Provides a lightweight provider for registering and resolving services and managers by type, with explicit registration and shutdown-aware resolution.",
   "unity": "6000.5",
   "unityRelease": "0f1",
   "dependencies": {
