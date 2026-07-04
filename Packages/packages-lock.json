@@ -37,7 +37,9 @@
       "version": "file:com.maxenceguidez.mxunikit.provider",
       "depth": 0,
       "source": "embedded",
-      "dependencies": {}
+      "dependencies": {
+        "com.maxenceguidez.mxunikit.log": "0.0.1"
+      }
     },
     "com.maxenceguidez.mxunikit.singleton": {
       "version": "file:com.maxenceguidez.mxunikit.singleton",

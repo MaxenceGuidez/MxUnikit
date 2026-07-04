@@ -1,7 +1,9 @@
 {
   "name": "MaxenceGuidez.MxUnikit.Provider",
   "rootNamespace": "MxUnikit.Provider",
-  "references": [],
+  "references": [
+    "MaxenceGuidez.MxUnikit.Log"
+  ],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

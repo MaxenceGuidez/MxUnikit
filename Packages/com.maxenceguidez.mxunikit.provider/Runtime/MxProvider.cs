@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using MxUnikit.Log;
 
 namespace MxUnikit.Provider
 {
@@ -8,7 +9,6 @@ namespace MxUnikit.Provider
     {
         private static readonly Dictionary<Type, object> _instances = new Dictionary<Type, object>();
         private static bool _isQuitting;
-
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Initialize()
@@ -32,17 +32,17 @@ namespace MxUnikit.Provider
 
             if (instance == null)
             {
-                Debug.LogError($"[MxProvider] Provided instance for '{type.Name}' is null.");
+                MxLog.E($"Provided instance for '{type.Name}' is null.");
                 return;
             }
 
             if (_instances.TryAdd(type, instance))
             {
-                Debug.Log($"[MxProvider] Registered '{type.Name}'.");
+                MxLog.L($"Registered '{type.Name}'.");
             }
             else
             {
-                Debug.LogWarning($"[MxProvider] '{type.Name}' is already registered. Replacing existing instance.");
+                MxLog.W($"'{type.Name}' is already registered. Replacing existing instance.");
                 _instances[type] = instance;
             }
         }
@@ -53,11 +53,11 @@ namespace MxUnikit.Provider
 
             if (_instances.Remove(type))
             {
-                Debug.Log($"[MxProvider] Unregistered '{type.Name}'.");
+                MxLog.L($"Unregistered '{type.Name}'.");
             }
             else
             {
-                Debug.LogWarning($"[MxProvider] '{type.Name}' was not registered.");
+                MxLog.W($"'{type.Name}' was not registered.");
             }
         }
 
@@ -76,7 +76,7 @@ namespace MxUnikit.Provider
 
             if (!_isQuitting)
             {
-                Debug.LogError($"[MxProvider] '{typeof(T).Name}' not registered!");
+                MxLog.E($"'{typeof(T).Name}' not registered!");
             }
 
             return null;
@@ -106,7 +106,7 @@ namespace MxUnikit.Provider
             int count = _instances.Count;
             _instances.Clear();
 
-            Debug.Log($"[MxProvider] Cleared all instances ({count} total).");
+            MxLog.L($"Cleared all instances ({count} total).");
         }
     }
 }
