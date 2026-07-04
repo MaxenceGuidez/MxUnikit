@@ -5,8 +5,8 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.maxenceguidez.mxunikit.log": "0.0.1",
-        "com.maxenceguidez.mxunikit.provider": "0.0.0"
+        "com.maxenceguidez.mxunikit.log": "0.4.0",
+        "com.maxenceguidez.mxunikit.provider": "0.2.0"
       }
     },
     "com.maxenceguidez.mxunikit.debug": {
@@ -38,7 +38,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.maxenceguidez.mxunikit.log": "0.0.1"
+        "com.maxenceguidez.mxunikit.log": "0.4.0"
       }
     },
     "com.maxenceguidez.mxunikit.singleton": {

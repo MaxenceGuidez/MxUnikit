@@ -1,10 +1,10 @@
 {
   "name": "com.maxenceguidez.mxunikit.debug",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "displayName": "MxUnikit - Debug",
   "description": "Provides global debug mode management with event-driven state control.",
-  "unity": "6000.3",
-  "unityRelease": "7f1",
+  "unity": "6000.5",
+  "unityRelease": "0f1",
   "author": {
     "name": "Maxence Guidez",
     "email": "contact@maxenceguidez.com"
