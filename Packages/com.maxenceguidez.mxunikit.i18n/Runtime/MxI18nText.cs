@@ -13,7 +13,7 @@ namespace MxUnikit.I18n
         // --------------------------------------------------------------------------------------------
         public static void RefreshAll()
         {
-            MonoBehaviour[] allBehaviours = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
+            MonoBehaviour[] allBehaviours = Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include);
 
             foreach (MonoBehaviour behaviour in allBehaviours)
             {

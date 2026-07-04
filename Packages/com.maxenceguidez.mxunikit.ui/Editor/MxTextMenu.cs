@@ -12,7 +12,7 @@ namespace MxUnikit.UI.Editor
         [MenuItem("GameObject/UI/MxUnikit/MxText")]
         private static void CreateMxText(MenuCommand menuCommand)
         {
-            Canvas canvas = Object.FindFirstObjectByType<Canvas>();
+            Canvas canvas = Object.FindAnyObjectByType<Canvas>();
             if (canvas == null)
             {
                 GameObject canvasGo = new GameObject("Canvas");
@@ -24,7 +24,7 @@ namespace MxUnikit.UI.Editor
                 Undo.RegisterCreatedObjectUndo(canvasGo, "Create " + canvasGo.name);
             }
 
-            if (Object.FindFirstObjectByType<EventSystem>() == null)
+            if (Object.FindAnyObjectByType<EventSystem>() == null)
             {
                 GameObject eventSystemGo = new GameObject("EventSystem", typeof(EventSystem));
                 InputModuleComponentFactory.AddInputModule(eventSystemGo);
