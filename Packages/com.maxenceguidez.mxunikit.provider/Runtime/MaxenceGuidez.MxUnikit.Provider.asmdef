@@ -1,9 +1,7 @@
 {
-  "name": "MaxenceGuidez.MxUnikit.ServiceLocator.Samples",
-  "rootNamespace": "MxUnikit.ServiceLocator.Samples",
-  "references": [
-    "MaxenceGuidez.MxUnikit.ServiceLocator"
-  ],
+  "name": "MaxenceGuidez.MxUnikit.Provider",
+  "rootNamespace": "MxUnikit.Provider",
+  "references": [],
   "includePlatforms": [],
   "excludePlatforms": [],
   "allowUnsafeCode": false,

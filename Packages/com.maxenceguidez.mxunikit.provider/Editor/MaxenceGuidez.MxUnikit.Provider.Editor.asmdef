@@ -1,8 +1,8 @@
 {
-  "name": "MaxenceGuidez.MxUnikit.ServiceLocator.Editor",
-  "rootNamespace": "MxUnikit.ServiceLocator.Editor",
+  "name": "MaxenceGuidez.MxUnikit.Provider.Editor",
+  "rootNamespace": "MxUnikit.Provider.Editor",
   "references": [
-    "MaxenceGuidez.MxUnikit.ServiceLocator"
+    "MaxenceGuidez.MxUnikit.Provider"
   ],
   "includePlatforms": [
     "Editor"
