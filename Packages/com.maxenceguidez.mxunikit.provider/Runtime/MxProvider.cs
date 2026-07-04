@@ -61,7 +61,10 @@ namespace MxUnikit.Provider
             }
         }
 
-        public static bool IsRegistered<T>() where T : class => _instances.ContainsKey(typeof(T));
+        public static bool IsRegistered<T>() where T : class
+        {
+            return _instances.ContainsKey(typeof(T));
+        }
 
         #endregion
 

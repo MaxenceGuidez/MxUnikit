@@ -28,8 +28,6 @@ namespace MxUnikit.Core
             try
             {
                 await Initialize();
-
-                MxLog.L("Core is ready");
                 OnInitialized?.Invoke();
             }
             catch (Exception ex)
