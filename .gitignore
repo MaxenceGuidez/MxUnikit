@@ -109,6 +109,10 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ss]amples/
 /[Aa]ssets/[Ss]amples.meta
 
+# Never track the container meta of a hidden `Samples~` package folder.
+# Unity keeps regenerating it and it must not propagate to consumer projects.
+Samples~.meta
+
 # Claude Code
 .claude/
 CLAUDE.md
