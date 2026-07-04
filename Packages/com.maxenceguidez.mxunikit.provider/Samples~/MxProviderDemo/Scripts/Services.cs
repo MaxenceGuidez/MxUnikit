@@ -1,10 +1,10 @@
 using UnityEngine;
 
-namespace MxUnikit.ServiceLocator.Samples
+namespace MxUnikit.Provider.Samples
 {
     #region Audio
 
-    public interface IAudioService : IService
+    public interface IAudioService
     {
         public void PlaySound(string soundName);
         public void StopSound();
@@ -32,7 +32,7 @@ namespace MxUnikit.ServiceLocator.Samples
 
     #region Data
 
-    public interface IDataService : IService
+    public interface IDataService
     {
         public void SaveData(string data);
         public string LoadData();
@@ -61,7 +61,7 @@ namespace MxUnikit.ServiceLocator.Samples
 
     #region Input
 
-    public interface IInputManager : IService
+    public interface IInputManager
     {
         public void ProcessInput();
     }
@@ -70,7 +70,7 @@ namespace MxUnikit.ServiceLocator.Samples
     {
         private void Awake()
         {
-            Debug.Log("[InputManager] MonoBehaviour service initialized");
+            Debug.Log("[InputManager] MonoBehaviour manager initialized");
         }
 
         public void ProcessInput()
@@ -81,7 +81,7 @@ namespace MxUnikit.ServiceLocator.Samples
 
     #endregion
 
-    public interface ISaveService : IService
+    public interface ISaveService
     {
 
     }
