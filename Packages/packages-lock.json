@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.maxenceguidez.mxunikit.core": {
+      "version": "file:com.maxenceguidez.mxunikit.core",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.maxenceguidez.mxunikit.log": "0.0.1",
+        "com.maxenceguidez.mxunikit.provider": "0.0.0"
+      }
+    },
     "com.maxenceguidez.mxunikit.debug": {
       "version": "file:com.maxenceguidez.mxunikit.debug",
       "depth": 0,

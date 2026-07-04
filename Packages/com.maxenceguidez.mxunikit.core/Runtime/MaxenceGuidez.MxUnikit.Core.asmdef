@@ -1,0 +1,17 @@
+{
+    "name": "MaxenceGuidez.MxUnikit.Core",
+    "rootNamespace": "MxUnikit.Core",
+    "references": [
+        "MaxenceGuidez.MxUnikit.Log",
+        "MaxenceGuidez.MxUnikit.Provider"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
