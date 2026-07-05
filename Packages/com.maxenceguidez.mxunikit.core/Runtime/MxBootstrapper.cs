@@ -20,7 +20,7 @@ namespace MxUnikit.Core
 
         private void OnDestroy()
         {
-            MxProvider.Unregister(this);
+            MxProvider.Unregister<MxBootstrapper>();
         }
 
         private async void Start()

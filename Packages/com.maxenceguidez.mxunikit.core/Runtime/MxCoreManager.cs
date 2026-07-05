@@ -22,7 +22,7 @@ namespace MxUnikit.Core
 
         private void OnDestroy()
         {
-            MxProvider.Unregister(this);
+            MxProvider.Unregister<MxCoreManager>();
 
             if (_bootstrapper != null)
             {
