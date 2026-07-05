@@ -1,0 +1,43 @@
+.mx-demo-title {
+    font-size: 32px;
+    margin-bottom: 24px;
+    -unity-font-style: bold;
+}
+
+.mx-demo-subtitle {
+    font-size: 28px;
+    margin-bottom: 16px;
+}
+
+.mx-demo-back-button {
+    margin-top: 24px;
+}
+
+.mx-demo-pause-button {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+}
+
+.mx-demo-dialog-overlay {
+    align-items: center;
+    justify-content: center;
+}
+
+.mx-demo-dialog-panel {
+    padding: 16px 24px;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+.mx-demo-dialog-title {
+    font-size: 22px;
+    margin-bottom: 8px;
+}
+
+.mx-demo-dialog-message {
+    margin-bottom: 16px;
+}
+
+.mx-demo-dialog-row {
+    flex-direction: row;
+}

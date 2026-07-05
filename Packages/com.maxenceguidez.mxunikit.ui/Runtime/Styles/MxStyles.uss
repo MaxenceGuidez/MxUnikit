@@ -1,0 +1,44 @@
+:root {
+    --space-1: 4px;
+    --space-2: 8px;
+    --space-3: 12px;
+    --space-4: 16px;
+    --space-5: 20px;
+    --space-6: 24px;
+    --space-7: 28px;
+    --space-8: 32px;
+    --space-9: 36px;
+    --space-10: 40px;
+    --space-11: 44px;
+    --space-12: 48px;
+    --space-13: 52px;
+    --space-14: 56px;
+    --space-15: 60px;
+    --space-16: 64px;
+    --space-18: 72px;
+    --space-20: 80px;
+    --space-22: 88px;
+    --space-24: 96px;
+    --space-26: 104px;
+    --space-28: 112px;
+    --space-30: 120px;
+    --space-32: 128px;
+    --space-36: 144px;
+    --space-40: 160px;
+    --space-44: 176px;
+    --space-48: 192px;
+    --space-52: 208px;
+    --space-56: 224px;
+    --space-60: 240px;
+    --space-64: 256px;
+    --space-128: 512px;
+    --space-256: 1024px;
+}
+
+.mx-hidden {
+    display: none;
+}
+
+.mx-view {
+    flex-grow: 1;
+}

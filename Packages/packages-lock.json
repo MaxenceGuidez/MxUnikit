@@ -64,7 +64,7 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.maxenceguidez.mxunikit.i18n": "0.0.0"
+        "com.maxenceguidez.mxunikit.log": "0.4.0"
       }
     },
     "com.unity.ext.nunit": {

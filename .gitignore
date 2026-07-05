@@ -115,3 +115,6 @@ Samples~.meta
 
 # Claude Code
 .claude/
+
+# UI Toolkit helpers
+UIElementsSchema/
