@@ -5,8 +5,6 @@ namespace MxUnikit.UI.Samples
 {
     public class SampleConfirmDialog : MxDialog
     {
-        private readonly Label _title;
-        private readonly Label _message;
         private readonly Button _confirmButton;
         private readonly Action _onConfirm;
 
@@ -20,14 +18,13 @@ namespace MxUnikit.UI.Samples
             dialogPanel.AddToClassList("mx-demo-dialog-panel");
             Add(dialogPanel);
 
-            _title = new Label();
-            _title.AddToClassList("mx-demo-dialog-title");
+            Label labelTitle = new Label();
+            labelTitle.AddToClassList("mx-demo-dialog-title");
+            labelTitle.text = title;
 
-            _message = new Label();
-            _message.AddToClassList("mx-demo-dialog-message");
-
-            dialogPanel.Add(_title);
-            dialogPanel.Add(_message);
+            Label labelMessage = new Label();
+            labelMessage.AddToClassList("mx-demo-dialog-message");
+            labelMessage.text = message;
 
             VisualElement row = new VisualElement();
             row.AddToClassList("mx-demo-dialog-row");
@@ -36,15 +33,10 @@ namespace MxUnikit.UI.Samples
             Button cancelButton = new Button(Close) { text = "Cancel" };
             row.Add(_confirmButton);
             row.Add(cancelButton);
+
+            dialogPanel.Add(labelTitle);
+            dialogPanel.Add(labelMessage);
             dialogPanel.Add(row);
-
-            Init(title, message);
-        }
-
-        public override void Init(string title, string message)
-        {
-            _title.text = title;
-            _message.text = message;
         }
 
         protected override void OnShow()
