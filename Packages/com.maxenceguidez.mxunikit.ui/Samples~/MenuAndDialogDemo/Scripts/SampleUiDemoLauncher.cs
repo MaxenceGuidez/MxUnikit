@@ -15,20 +15,24 @@ namespace MxUnikit.UI.Samples
             if (_menuUiManager == null || _menuUiManager.HomeMenu == null) return;
 
             _menuUiManager.HomeMenu.OnClickPlay += _menuUiManager.StartGameplay;
-            _menuUiManager.HomeMenu.OnClickQuit += ConfirmOnClickQuit;
+            _menuUiManager.HomeMenu.OnClickInfos += OnClickInfos;
+            _menuUiManager.HomeMenu.OnClickQuit += OnClickQuit;
 
             _isWired = true;
         }
 
-        private void ConfirmOnClickQuit()
+        private void OnClickInfos()
         {
-            SampleConfirmDialog dialog = new SampleConfirmDialog(
+            _overlayUiManager.ShowMessageDialog("Infos", "This is an information.");
+        }
+
+        private void OnClickQuit()
+        {
+            _overlayUiManager.ShowConfirmDialog(
                 "Quit?",
                 "Are you sure you want to quit?",
                 Application.Quit
             );
-
-            _overlayUiManager.ShowDialog(dialog);
         }
     }
 }

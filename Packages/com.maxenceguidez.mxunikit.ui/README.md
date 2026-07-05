@@ -97,8 +97,6 @@ Then push it onto the overlay stack:
 ```csharp
 public class OverlayUiManager : MxOverlayUiManager
 {
-    protected override void OnUiReady() { }
-
     protected override void OnFirstDialogOpened() => MxProvider.Get<InputManager>()?.SetEnabled(false);
     protected override void OnLastDialogClosed()  => MxProvider.Get<InputManager>()?.SetEnabled(true);
 }

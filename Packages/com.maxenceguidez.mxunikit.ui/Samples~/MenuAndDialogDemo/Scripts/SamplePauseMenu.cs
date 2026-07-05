@@ -14,11 +14,11 @@ namespace MxUnikit.UI.Samples
             title.AddToClassList("mx-demo-subtitle");
             Add(title);
 
-            Button resumeButton = new Button(() => OnClickResume?.Invoke()) { text = "Resume" };
-            Button quitButton = new Button(() => OnClickQuitToMenu?.Invoke()) { text = "Quit to Menu" };
+            Button buttonResume = new Button(() => OnClickResume?.Invoke()) { text = "Resume" };
+            Button buttonQuit = new Button(() => OnClickQuitToMenu?.Invoke()) { text = "Quit to Menu" };
 
-            Add(resumeButton);
-            Add(quitButton);
+            Add(buttonResume);
+            Add(buttonQuit);
         }
     }
 }

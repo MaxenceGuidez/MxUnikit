@@ -37,7 +37,3 @@
 .mx-demo-dialog-message {
     margin-bottom: 16px;
 }
-
-.mx-demo-dialog-row {
-    flex-direction: row;
-}

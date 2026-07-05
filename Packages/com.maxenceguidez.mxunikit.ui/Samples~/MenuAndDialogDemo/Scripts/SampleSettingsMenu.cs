@@ -13,14 +13,14 @@ namespace MxUnikit.UI.Samples
             title.AddToClassList("mx-demo-subtitle");
             Add(title);
 
-            Toggle vsyncToggle = new Toggle("VSync") { value = true };
-            Slider volumeSlider = new Slider("Volume", 0f, 1f) { value = 0.8f };
-            Add(vsyncToggle);
-            Add(volumeSlider);
+            Toggle toggleVsync = new Toggle("VSync") { value = true };
+            Slider sliderVolume = new Slider("Volume", 0f, 1f) { value = 0.8f };
+            Add(toggleVsync);
+            Add(sliderVolume);
 
-            Button backButton = new Button(() => OnClickBack?.Invoke()) { text = "Back" };
-            backButton.AddToClassList("mx-demo-back-button");
-            Add(backButton);
+            Button buttonBack = new Button(() => OnClickBack?.Invoke()) { text = "Back" };
+            buttonBack.AddToClassList("mx-demo-back-button");
+            Add(buttonBack);
         }
     }
 }

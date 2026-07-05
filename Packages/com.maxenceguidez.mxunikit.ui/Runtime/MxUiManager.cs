@@ -35,7 +35,7 @@ namespace MxUnikit.UI
             OnUiReady();
         }
 
-        protected abstract void OnUiReady();
+        protected virtual void OnUiReady() { }
 
         public void Show()
         {

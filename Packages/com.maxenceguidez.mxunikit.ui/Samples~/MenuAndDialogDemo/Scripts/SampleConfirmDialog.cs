@@ -3,50 +3,25 @@ using UnityEngine.UIElements;
 
 namespace MxUnikit.UI.Samples
 {
-    public class SampleConfirmDialog : MxDialog
+    [UxmlElement]
+    public partial class SampleConfirmDialog : SampleMessageDialog
     {
-        private readonly Button _confirmButton;
-        private readonly Action _onConfirm;
+        private Action _onCancel;
 
-        public SampleConfirmDialog(string title, string message, Action onConfirm)
+        public SampleConfirmDialog()
         {
-            _onConfirm = onConfirm;
-
-            AddToClassList("mx-demo-dialog-overlay");
-
-            VisualElement dialogPanel = new VisualElement();
-            dialogPanel.AddToClassList("mx-demo-dialog-panel");
-            Add(dialogPanel);
-
-            Label labelTitle = new Label();
-            labelTitle.AddToClassList("mx-demo-dialog-title");
-            labelTitle.text = title;
-
-            Label labelMessage = new Label();
-            labelMessage.AddToClassList("mx-demo-dialog-message");
-            labelMessage.text = message;
-
-            VisualElement row = new VisualElement();
-            row.AddToClassList("mx-demo-dialog-row");
-
-            _confirmButton = new Button(OnConfirm) { text = "OK" };
-            Button cancelButton = new Button(Close) { text = "Cancel" };
-            row.Add(_confirmButton);
-            row.Add(cancelButton);
-
-            dialogPanel.Add(labelTitle);
-            dialogPanel.Add(labelMessage);
-            dialogPanel.Add(row);
+            _dialogPanel.Add(new Button(OnClickCancel) { text = "Cancel" });
         }
 
-        protected override void OnShow()
+        public void Init(string title, string message, Action onConfirm, Action onCancel = null)
         {
-            _confirmButton.Focus();
+            base.Init(title, message, onConfirm);
+            _onCancel = onCancel;
         }
 
-        private void OnConfirm()
+        private void OnClickCancel()
         {
-            _onConfirm?.Invoke();
+            _onCancel?.Invoke();
             Close();
         }
     }
