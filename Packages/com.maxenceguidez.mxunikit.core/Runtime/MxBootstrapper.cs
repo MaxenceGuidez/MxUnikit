@@ -11,7 +11,11 @@ namespace MxUnikit.Core
     {
         [SerializeField] private string _nextSceneName;
 
+        public bool IsPreloaded { get; private set; }
+
         public event Action OnPreloaded;
+
+        #region Init
 
         private void Awake()
         {
@@ -28,6 +32,8 @@ namespace MxUnikit.Core
             try
             {
                 await Preload();
+
+                IsPreloaded = true;
                 OnPreloaded?.Invoke();
 
                 LoadNextScene();
@@ -50,5 +56,7 @@ namespace MxUnikit.Core
 
             SceneManager.LoadScene(_nextSceneName, LoadSceneMode.Single);
         }
+
+        #endregion
     }
 }

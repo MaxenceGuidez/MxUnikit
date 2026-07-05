@@ -8,9 +8,11 @@ namespace MxUnikit.Core
 {
     public abstract class MxCoreManager : MonoBehaviour
     {
-        public event Action OnInitialized;
-
         private MxBootstrapper _bootstrapper;
+
+        public bool IsInitialized { get; private set; }
+
+        public event Action OnInitialized;
 
         #region Init
 
@@ -26,7 +28,7 @@ namespace MxUnikit.Core
 
             if (_bootstrapper != null)
             {
-                _bootstrapper.OnPreloaded -= OnBootstrapperPreloaded;
+                _bootstrapper.OnPreloaded -= HandleBootstrapperPreloaded;
             }
         }
 
@@ -38,20 +40,28 @@ namespace MxUnikit.Core
                 return;
             }
 
-            _bootstrapper.OnPreloaded += OnBootstrapperPreloaded;
+            if (_bootstrapper.IsPreloaded)
+            {
+                _ = InitializeAsync();
+                return;
+            }
+
+            _bootstrapper.OnPreloaded += HandleBootstrapperPreloaded;
         }
 
-        private async void OnBootstrapperPreloaded()
+        private void HandleBootstrapperPreloaded()
         {
-            _bootstrapper.OnPreloaded -= OnBootstrapperPreloaded;
-            await InitializeAsync();
+            _bootstrapper.OnPreloaded -= HandleBootstrapperPreloaded;
+            _ = InitializeAsync();
         }
 
-        public async Task InitializeAsync()
+        private async Task InitializeAsync()
         {
             try
             {
                 await Initialize();
+
+                IsInitialized = true;
                 OnInitialized?.Invoke();
             }
             catch (Exception ex)
