@@ -1,6 +1,6 @@
 {
   "name": "com.maxenceguidez.mxunikit.core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "MxUnikit - Core",
   "description": "Provides a minimal game lifecycle core: an async-initialized core manager and a scene bootstrapper to start a project quickly.",
   "unity": "6000.5",

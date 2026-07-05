@@ -8,12 +8,12 @@ namespace MxUnikit.Core.Samples
     {
         protected override async Task Initialize()
         {
-            MxProvider.Register<SampleClockService>(new SampleClockService());
+            SampleClockService clockService = new SampleClockService();
 
             // Simulate asynchronous startup work (asset loading, sign-in...).
             await Task.Delay(500);
 
-            MxLog.L($"Boot completed at {MxProvider.Get<SampleClockService>().Now}");
+            MxLog.L($"Game initialization completed at {clockService.Now}");
         }
     }
 }

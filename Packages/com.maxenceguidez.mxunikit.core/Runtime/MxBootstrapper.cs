@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MxUnikit.Log;
@@ -6,61 +7,47 @@ using MxUnikit.Provider;
 
 namespace MxUnikit.Core
 {
-    public class MxBootstrapper : MonoBehaviour
+    public abstract class MxBootstrapper : MonoBehaviour
     {
         [SerializeField] private string _nextSceneName;
 
-        private MxCoreManager _core;
-        private bool _hasLoadedNextScene;
+        public event Action OnPreloaded;
 
-        private async void Start()
+        private void Awake()
         {
-            _core = MxProvider.Get<MxCoreManager>();
-
-            if (_core == null)
-            {
-                MxLog.E("No MxCoreManager registered. Loading next scene without initialization.");
-                LoadNextScene();
-                return;
-            }
-
-            try
-            {
-                _core.OnInitialized += OnCoreInitialized;
-                await _core.InitializeAsync();
-            }
-            catch (Exception ex)
-            {
-                MxLog.E($"Error during initialization: {ex.Message}");
-                LoadNextScene();
-            }
+            MxProvider.Register(this);
         }
 
         private void OnDestroy()
         {
-            if (_core != null)
+            MxProvider.Unregister(this);
+        }
+
+        private async void Start()
+        {
+            try
             {
-                _core.OnInitialized -= OnCoreInitialized;
+                await Preload();
+                OnPreloaded?.Invoke();
+
+                LoadNextScene();
+            }
+            catch (Exception ex)
+            {
+                MxLog.Ex(ex);
             }
         }
 
-        private void OnCoreInitialized() => LoadNextScene();
+        protected abstract Task Preload();
 
         private void LoadNextScene()
         {
-            if (_hasLoadedNextScene)
-            {
-                MxLog.W("Next scene already loaded. Ignoring duplicate request.");
-                return;
-            }
-
             if (string.IsNullOrEmpty(_nextSceneName))
             {
                 MxLog.E("Next scene name is not set on MxBootstrapper.");
                 return;
             }
 
-            _hasLoadedNextScene = true;
             SceneManager.LoadScene(_nextSceneName, LoadSceneMode.Single);
         }
     }
