@@ -17,12 +17,12 @@ namespace MxUnikit.Core
 
         #region Init
 
-        private void Awake()
+        protected virtual void Awake()
         {
             MxProvider.Register(this);
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             MxProvider.Unregister<MxBootstrapper>();
         }

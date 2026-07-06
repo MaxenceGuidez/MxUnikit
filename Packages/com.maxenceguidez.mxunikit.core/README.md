@@ -2,6 +2,8 @@
 
 Minimal game lifecycle foundation to bootstrap a project quickly, without copy-pasting the same boilerplate across games. Built on top of `MxUnikit.Provider` (no singletons).
 
+> WARN: This package is experimental and subject to frequent changes. It is not intended for public use.
+
 It provides a two-phase, event-driven startup, both living in the bootstrap scene:
 
 - **`MxBootstrapper`** — an abstract `MonoBehaviour`. It registers itself into `MxProvider`, runs

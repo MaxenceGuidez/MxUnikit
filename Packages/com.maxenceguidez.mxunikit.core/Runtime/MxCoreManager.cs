@@ -16,13 +16,13 @@ namespace MxUnikit.Core
 
         #region Init
 
-        private void Awake()
+        protected virtual void Awake()
         {
             DontDestroyOnLoad(gameObject);
             MxProvider.Register(this);
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             MxProvider.Unregister<MxCoreManager>();
 
