@@ -22,7 +22,7 @@ Seven packages are **PROD** (maintained). The rest are **WIP** — do not touch 
 | `log`                                    | 0.4.0   | —             | `MxLog`, `MxLogConfig`, `MxLogCategory`                                 | ✅ config editor    | Sample - MxLog                                         |
 | `provider`                               | 0.3.0   | log           | `MxProvider`                                                            | ✅ inspector window | Sample - MxProvider, Sample - Multi Key Registration   |
 | `tests`                                  | 0.2.0   | —             | `RequiredFieldAttribute`, validators, `ProjectReferenceValidationTests` | ✅ validation       | Sample - Basic Validation                              |
-| `ui`                                     | 0.1.0   | —             | `MxUiManager`, `MxView`                                                 | —                  | Sample - Menu And Dialog                               |
+| `ui`                                     | 0.2.0   | log           | `MxUiManager`, `MxView`                                                 | —                  | Sample - Menu And Dialog                               |
 
 WIP (ignore): `i18n`, `singleton`, `timer`. Their samples (where present) already follow the
 nomenclature below since it was applied repo-wide, but the packages themselves are still off-limits

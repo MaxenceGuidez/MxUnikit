@@ -1,0 +1,17 @@
+{
+  "name": "MaxenceGuidez.MxUnikit.UI.Samples.SampleUiReadiness",
+  "rootNamespace": "MxUnikit.UI.Samples.SampleUiReadiness",
+  "references": [
+    "MaxenceGuidez.MxUnikit.UI",
+    "MaxenceGuidez.MxUnikit.Log"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

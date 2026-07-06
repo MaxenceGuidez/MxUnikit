@@ -8,7 +8,8 @@ views, widgets and service wiring stay in your project.
 
 - **`MxUiManager`** — abstract `MonoBehaviour` (requires a `PanelRenderer`) that owns one UI layer:
   resolves the panel `Root` on UI reload, calls `OnUiReady()`, and exposes `Show()`/`Hide()`/`IsVisible`
-  for the whole layer, plus `FocusedElement` and `SetRootEnabled`.
+  for the whole layer, plus `FocusedElement`, `SetRootEnabled`, and `IsUiReady`/`WaitUntilUiReadyAsync()`
+  to await the first UI load.
 - **`MxView`** — abstract `VisualElement` (tagged `mx-view`) with `Show()`/`Hide()` (toggling the
   `mx-hidden` USS class) and `OnShow()`/`OnHide()` hooks.
 - **`MxMenuUiManager<TKey>`** — a menu layer with **navigation history**: `ShowMenu(key, isRoot)`,
@@ -70,6 +71,21 @@ public class MenuUiManager : MxMenuUiManager<MenuType>
     {
         MxProvider.Get<CursorManager>()?.Show();
     }
+}
+```
+
+### Waiting for the UI
+
+The `PanelRenderer` loads the UI *after* the first frame's `Start()` calls, so code driving a
+manager from outside (e.g. `MxCoreManager.Initialize()`) must await readiness before using it:
+
+```csharp
+protected override async Task Initialize()
+{
+    MenuUiManager menus = MxProvider.Get<MenuUiManager>();
+
+    await menus.WaitUntilUiReadyAsync();
+    menus.ShowMenu(MenuType.Home, isRoot: true);
 }
 ```
 

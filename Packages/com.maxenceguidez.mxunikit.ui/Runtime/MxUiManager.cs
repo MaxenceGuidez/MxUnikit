@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -9,9 +10,12 @@ namespace MxUnikit.UI
         protected PanelRenderer _panelRenderer;
         protected VisualElement _root;
 
+        private readonly TaskCompletionSource<bool> _uiReadyTcs = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
         public VisualElement Root => _root;
         public Focusable FocusedElement => _root?.focusController?.focusedElement;
         public bool IsVisible => _root != null && !_root.ClassListContains(MxStyles.HiddenClassName);
+        public bool IsUiReady => _uiReadyTcs.Task.IsCompletedSuccessfully;
 
         protected virtual void Awake()
         {
@@ -29,13 +33,25 @@ namespace MxUnikit.UI
             _panelRenderer.UnregisterUIReloadCallback(OnUiReload);
         }
 
+        protected virtual void OnDestroy()
+        {
+            _uiReadyTcs.TrySetCanceled();
+        }
+
         private void OnUiReload(PanelRenderer renderer, VisualElement root)
         {
             _root = root;
             OnUiReady();
+
+            _uiReadyTcs.TrySetResult(true);
         }
 
         protected virtual void OnUiReady() { }
+
+        public Task WaitUntilUiReadyAsync()
+        {
+            return _uiReadyTcs.Task;
+        }
 
         public void Show()
         {
