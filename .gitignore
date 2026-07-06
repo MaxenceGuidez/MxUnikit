@@ -11,6 +11,9 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 *.log
+# *.log above also matches the com.maxenceguidez.mxunikit.log package directory by name; re-include it.
+!/Packages/com.maxenceguidez.mxunikit.log/
+!/Packages/com.maxenceguidez.mxunikit.log/**
 
 # By default unity supports Blender asset imports, *.blend1 blender files do not need to be commited to version control.
 *.blend1

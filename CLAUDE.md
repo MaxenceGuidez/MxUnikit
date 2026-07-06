@@ -14,17 +14,19 @@ scratch/test content and imported samples (mostly git-ignored).
 
 Seven packages are **PROD** (maintained). The rest are **WIP** — do not touch unless asked.
 
-| Package (`com.maxenceguidez.mxunikit.*`) | Version | Deps          | Key types                                                               | Editor             | Sample                                  |
-|------------------------------------------|---------|---------------|-------------------------------------------------------------------------|--------------------|-----------------------------------------|
-| `core`                                   | 0.2.0   | log, provider | `MxCoreManager`, `MxBootstrapper`                                       | —                  | Core Bootstrap                          |
-| `debug`                                  | 0.1.0   | —             | `MxDebug`                                                               | —                  | —                                       |
-| `extensions`                             | 0.1.0   | —             | `MxExtensions`                                                          | —                  | —                                       |
-| `log`                                    | 0.4.0   | —             | `MxLog`, `MxLogConfig`, `MxLogCategory`                                 | ✅ config editor    | MxLog Demo                              |
-| `provider`                               | 0.3.0   | log           | `MxProvider`                                                            | ✅ inspector window | MxProvider Demo, Multi Key Registration |
-| `tests`                                  | 0.2.0   | —             | `RequiredFieldAttribute`, validators, `ProjectReferenceValidationTests` | ✅ validation       | Basic Validation                        |
-| `ui`                                     | 0.1.0   | —             | `MxUiManager`, `MxView`                                                 | —                  | Menu And Dialog Demo                    |
+| Package (`com.maxenceguidez.mxunikit.*`) | Version | Deps          | Key types                                                               | Editor             | Sample                                                |
+|------------------------------------------|---------|---------------|-------------------------------------------------------------------------|--------------------|--------------------------------------------------------|
+| `core`                                   | 0.2.0   | log, provider | `MxCoreManager`, `MxBootstrapper`                                       | —                  | Sample - Core Bootstrap                                |
+| `debug`                                  | 0.1.0   | —             | `MxDebug`                                                               | —                  | —                                                      |
+| `extensions`                             | 0.1.0   | —             | `MxExtensions`                                                          | —                  | —                                                      |
+| `log`                                    | 0.4.0   | —             | `MxLog`, `MxLogConfig`, `MxLogCategory`                                 | ✅ config editor    | Sample - MxLog                                         |
+| `provider`                               | 0.3.0   | log           | `MxProvider`                                                            | ✅ inspector window | Sample - MxProvider, Sample - Multi Key Registration   |
+| `tests`                                  | 0.2.0   | —             | `RequiredFieldAttribute`, validators, `ProjectReferenceValidationTests` | ✅ validation       | Sample - Basic Validation                              |
+| `ui`                                     | 0.1.0   | —             | `MxUiManager`, `MxView`                                                 | —                  | Sample - Menu And Dialog                               |
 
-WIP (ignore): `i18n`, `singleton`, `timer`, `ui`.
+WIP (ignore): `i18n`, `singleton`, `timer`. Their samples (where present) already follow the
+nomenclature below since it was applied repo-wide, but the packages themselves are still off-limits
+unless asked.
 
 ## Naming conventions (keep everything consistent)
 
@@ -38,6 +40,32 @@ WIP (ignore): `i18n`, `singleton`, `timer`, `ui`.
 
 Author is always `Maxence Guidez <contact@maxenceguidez.com>`. Versions stay in `0.x.x` (no 1.0.0 yet).
 
+### Sample nomenclature
+
+Applies to every sample, in every package (PROD or WIP), regardless of how many samples a
+package has — there is no shorthand for the single-sample case.
+
+| Thing                                 | Pattern                                                                                    | Example                                                                              |
+|---------------------------------------|--------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| Folder (`Samples~/<x>`)               | `Sample<Name>`                                                                             | `Samples~/SampleMxProvider`                                                          |
+| Assembly (asmdef)                     | `MaxenceGuidez.MxUnikit.<Pascal>.Samples.Sample<Name>` — always, even with a single sample | `MaxenceGuidez.MxUnikit.Provider.Samples.SampleMxProvider`                           |
+| Namespace                             | `MxUnikit.<Pascal>.Samples.Sample<Name>`                                                   | `MxUnikit.Provider.Samples.SampleMxProvider`                                         |
+| `package.json` `displayName`          | `Sample - <Human Name>`                                                                    | `Sample - Multi Key Registration`                                                    |
+| `package.json` `description` (sample) | Starts with `Demonstrates`, 1 to 3 sentences                                               | `Demonstrates registration, resolution and MonoBehaviour managers using MxProvider.` |
+
+- No sample script, class, method, scene, GameObject, asset, or CSS class may contain the word
+  "Demo" — everything sample-specific is `Sample`-prefixed instead (e.g. `SampleProviderManager`,
+  never `DemoManager` or `MxProviderDemoManager`).
+- Scene-serialized fields that reference sample identity by string (`_nextSceneName`,
+  `m_EditorClassIdentifier`, GameObject `m_Name`) must be updated by hand when renaming — Unity
+  doesn't rewrite them until the scene is reopened and re-saved.
+
+### Package description convention
+
+`package.json` top-level `description` (not the sample one above): starts with `Provides a`, no
+`:`, 2 to 6 sentences, and stays generic — describe what the package is for (e.g. "adds a timer
+system", "adds validation tooling"), not what each individual script does.
+
 ## Package anatomy
 
 ```
@@ -46,7 +74,7 @@ com.maxenceguidez.mxunikit.<x>/
 ├── README.md (+ .meta)
 ├── Runtime/                    # asmdef MaxenceGuidez.MxUnikit.<X> + sources
 ├── Editor/                     # optional; asmdef ...<X>.Editor, includePlatforms: [Editor]
-└── Samples~/                   # optional; hidden from Unity; demos referenced from package.json "samples"
+└── Samples~/                   # optional; hidden from Unity; samples referenced from package.json "samples"
 ```
 
 - Every file **and folder** has a `.meta`. Indentation: `.cs` = 4 spaces, `.json`/`.asmdef` = 2 spaces (`.editorconfig`).
@@ -58,6 +86,14 @@ A folder ending in `~` is hidden from Unity and must **never** have a root `Samp
 Unity warns ("folder can't be found, has been created") and keeps regenerating it. The
 `.gitignore` has a `Samples~.meta` rule so it can never be committed again. The `.meta` files
 *inside* `Samples~` are kept (they stabilize GUIDs when the sample is imported).
+
+### ⚠️ `.gitignore` `*.log` gotcha
+
+The Unity-template `*.log` rule (meant for `Editor.log`/`Player.log`) also matches the
+`com.maxenceguidez.mxunikit.log` package **directory** by name, since gitignore patterns without
+a slash match at any path depth. Without the explicit `!/Packages/com.maxenceguidez.mxunikit.log/`
++ `!/Packages/com.maxenceguidez.mxunikit.log/**` negation lines right after it, every new file
+(mainly `.meta`) added under that package silently fails to track — don't remove those negations.
 
 ## Core architecture (provider + core)
 
@@ -110,7 +146,7 @@ End commit messages with the required `Co-Authored-By` trailer. Branch before co
 
 ## House rules / gotchas
 
-- Only the six PROD packages above are in scope by default.
+- Only the seven PROD packages above are in scope by default.
 - When bumping a package version, realign dependents' dependency constraints
   (e.g. `core` → `log`/`provider`, `provider` → `log`).
 - After editing package files, re-focus Unity to recompile; re-import a sample to test its copy.

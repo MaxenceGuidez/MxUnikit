@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.singleton",
   "version": "0.0.0",
   "displayName": "MxUnikit - Singleton",
-  "description": "Provides professional singleton implementations for both normal C# classes and MonoBehaviour classes with explicit lifecycle control.",
+  "description": "Provides a set of singleton implementations for a project. It covers plain C# class singletons, persistent MonoBehaviour singletons, and scene-scoped singletons, all with explicit lifecycle hooks. This avoids re-implementing the same singleton boilerplate in every project.",
   "unity": "6000.3",
   "unityRelease": "7f1",
   "author": {
@@ -11,9 +11,9 @@
   },
   "samples": [
     {
-      "displayName": "MxSingleton Demo",
-      "description": "Complete demonstration of normal class singletons, persistent MonoBehaviour singletons, and scene-scoped singletons.",
-      "path": "Samples~/MxSingletonDemo"
+      "displayName": "Sample - MxSingleton",
+      "description": "Demonstrates normal class singletons, persistent MonoBehaviour singletons, and scene-scoped singletons.",
+      "path": "Samples~/SampleMxSingleton"
     }
   ]
 }

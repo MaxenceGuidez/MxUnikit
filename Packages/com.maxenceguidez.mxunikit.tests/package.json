@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.tests",
   "version": "0.2.0",
   "displayName": "MxUnikit - Tests",
-  "description": "Provides validation attributes and Unity Test Framework integrations for project-wide validation.",
+  "description": "Provides validation tooling for a project. It adds attributes for marking required fields on components and integrates with the Unity Test Framework to catch missing references before they cause runtime errors. This is meant to run project-wide rather than per-feature.",
   "unity": "6000.5",
   "unityRelease": "0f1",
   "author": {
@@ -11,9 +11,9 @@
   },
   "samples": [
     {
-      "displayName": "Basic Validation",
-      "description": "Example script demonstrating RequiredFieldAttribute usage and validation tests.",
-      "path": "Samples~/BasicValidation"
+      "displayName": "Sample - Basic Validation",
+      "description": "Demonstrates RequiredFieldAttribute usage and the validation tests it enables.",
+      "path": "Samples~/SampleBasicValidation"
     }
   ]
 }

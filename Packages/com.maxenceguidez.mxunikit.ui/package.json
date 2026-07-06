@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.ui",
   "version": "0.1.0",
   "displayName": "MxUnikit - UI",
-  "description": "Provides UI Toolkit foundations for a layered UI: an abstract PanelRenderer-based layer manager, a base view with show/hide lifecycle, a menu navigator with history, and a dialog stack manager.",
+  "description": "Provides UI Toolkit foundations for a layered UI in a project. It includes a base view with a show and hide lifecycle, a menu navigator with history, and a dialog stack manager built on a shared layer manager. Together these pieces give a project a consistent way to structure menus and dialogs without rebuilding navigation logic each time.",
   "unity": "6000.5",
   "unityRelease": "0f1",
   "dependencies": {
@@ -14,9 +14,9 @@
   },
   "samples": [
     {
-      "displayName": "Menu and Dialog Demo",
-      "description": "Code-first sample wiring MxMenuUiManager and MxOverlayUiManager with three menus (Home, Settings, Pause) and a confirmation dialog.",
-      "path": "Samples~/MenuAndDialogDemo"
+      "displayName": "Sample - Menu And Dialog",
+      "description": "Demonstrates a code-first UI wiring MxMenuUiManager and MxOverlayUiManager with three menus (Home, Settings, Pause) and a confirmation dialog.",
+      "path": "Samples~/SampleMenuAndDialog"
     }
   ]
 }

@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.provider",
   "version": "0.3.0",
   "displayName": "MxUnikit - Provider",
-  "description": "Provides a lightweight provider for registering and resolving services and managers by type, with explicit registration and shutdown-aware resolution.",
+  "description": "Provides a lightweight service locator for a project. Services and managers are registered and resolved by type, with explicit registration and shutdown-aware resolution so lookups fail predictably instead of silently. It removes the need for singletons while keeping cross-system access simple.",
   "unity": "6000.5",
   "unityRelease": "0f1",
   "dependencies": {
@@ -14,14 +14,14 @@
   },
   "samples": [
     {
-      "displayName": "MxProvider Demo",
+      "displayName": "Sample - MxProvider",
       "description": "Demonstrates registration, resolution and MonoBehaviour managers using MxProvider.",
-      "path": "Samples~/MxProviderDemo"
+      "path": "Samples~/SampleMxProvider"
     },
     {
-      "displayName": "Multi Key Registration",
-      "description": "Registers a manager under both its abstract base and concrete type keys, and resolves it by each.",
-      "path": "Samples~/MultiKeyRegistration"
+      "displayName": "Sample - Multi Key Registration",
+      "description": "Demonstrates registering a manager under both its abstract base and concrete type keys, and resolving it by each.",
+      "path": "Samples~/SampleMultiKeyRegistration"
     }
   ]
 }

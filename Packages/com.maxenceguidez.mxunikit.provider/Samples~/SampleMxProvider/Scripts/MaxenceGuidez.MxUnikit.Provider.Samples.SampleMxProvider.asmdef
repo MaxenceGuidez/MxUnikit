@@ -1,0 +1,16 @@
+{
+  "name": "MaxenceGuidez.MxUnikit.Provider.Samples.SampleMxProvider",
+  "rootNamespace": "MxUnikit.Provider.Samples.SampleMxProvider",
+  "references": [
+    "MaxenceGuidez.MxUnikit.Provider"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

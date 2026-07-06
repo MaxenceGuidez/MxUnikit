@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.debug",
   "version": "0.1.0",
   "displayName": "MxUnikit - Debug",
-  "description": "Provides global debug mode management with event-driven state control.",
+  "description": "Provides a simple global debug mode toggle for a project. Systems can enable, disable, or query the current debug state, and react to changes through an event. This avoids scattering debug flags and ad-hoc checks across unrelated systems.",
   "unity": "6000.5",
   "unityRelease": "0f1",
   "author": {

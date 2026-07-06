@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.core",
   "version": "0.2.0",
   "displayName": "MxUnikit - Core",
-  "description": "Provides a minimal game lifecycle core: an async-initialized core manager and a scene bootstrapper to start a project quickly.",
+  "description": "Provides a minimal game lifecycle core for a project. It combines a scene bootstrapper that preloads services with a manager that survives into the main scene and runs the actual game initialization. This gives new projects a consistent startup flow without writing lifecycle glue code by hand.",
   "unity": "6000.5",
   "unityRelease": "0f1",
   "dependencies": {
@@ -15,9 +15,9 @@
   },
   "samples": [
     {
-      "displayName": "Core Bootstrap",
-      "description": "Concrete MxCoreManager with a launcher demonstrating the async initialization flow.",
-      "path": "Samples~/CoreBootstrap"
+      "displayName": "Sample - Core Bootstrap",
+      "description": "Demonstrates the async initialization flow with a concrete MxBootstrapper and MxCoreManager wired across a bootstrap and a game scene.",
+      "path": "Samples~/SampleCoreBootstrap"
     }
   ]
 }

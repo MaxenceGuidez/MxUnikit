@@ -1,0 +1,17 @@
+{
+  "name": "MaxenceGuidez.MxUnikit.UI.Samples.SampleMenuAndDialog",
+  "rootNamespace": "MxUnikit.UI.Samples.SampleMenuAndDialog",
+  "references": [
+    "MaxenceGuidez.MxUnikit.UI",
+    "MaxenceGuidez.MxUnikit.Log"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

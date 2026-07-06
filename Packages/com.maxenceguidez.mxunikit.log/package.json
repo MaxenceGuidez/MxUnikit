@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.log",
   "version": "0.4.0",
   "displayName": "MxUnikit - Log",
-  "description": "Provides a categorized logging utility with automatic caller detection and color-coded output.",
+  "description": "Provides a categorized logging utility for a project. It automatically detects the calling context and applies color-coded output per category, making runtime logs easier to scan during development. Logging behavior is driven by a configuration asset so categories can be tuned without touching code.",
   "unity": "6000.5",
   "unityRelease": "0f1",
   "author": {
@@ -11,9 +11,9 @@
   },
   "samples": [
     {
-      "displayName": "MxLog Demo",
-      "description": "Demonstrates how to create and use MxLog.",
-      "path": "Samples~/MxLogDemo"
+      "displayName": "Sample - MxLog",
+      "description": "Demonstrates basic logging, custom categories, and message filtering with MxLog.",
+      "path": "Samples~/SampleMxLog"
     }
   ]
 }

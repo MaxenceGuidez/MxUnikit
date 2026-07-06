@@ -2,7 +2,7 @@
   "name": "com.maxenceguidez.mxunikit.timer",
   "version": "0.0.0",
   "displayName": "MxUnikit - Timer",
-  "description": "Provides a professional timer system replacing coroutines with explicit, controllable, and debuggable time management.",
+  "description": "Provides a timer system for a project as a replacement for coroutine-based delays. Timers are scheduled explicitly and can be paused, cancelled, or queried for their remaining time, which makes them easier to control and debug than coroutines. It also supports repeating, conditional, and sequenced timers.",
   "unity": "6000.3",
   "unityRelease": "7f1",
   "author": {
@@ -11,9 +11,9 @@
   },
   "samples": [
     {
-      "displayName": "MxTimer Demo",
-      "description": "Complete demonstration of all MxTimer features including scheduling, repeating, conditionals, progress timers, control methods, owner-based management, global settings, and sequences.",
-      "path": "Samples~/MxTimerDemo"
+      "displayName": "Sample - MxTimer",
+      "description": "Demonstrates MxTimer scheduling, repeating, conditionals, progress timers, control methods, owner-based management, global settings, and sequences.",
+      "path": "Samples~/SampleMxTimer"
     }
   ]
 }

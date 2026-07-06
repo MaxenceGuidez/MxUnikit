@@ -1,0 +1,16 @@
+{
+  "name": "MaxenceGuidez.MxUnikit.Provider.Samples.SampleMultiKeyRegistration",
+  "rootNamespace": "MxUnikit.Provider.Samples.SampleMultiKeyRegistration",
+  "references": [
+    "MaxenceGuidez.MxUnikit.Provider"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}
