@@ -1,6 +1,6 @@
 # MxUnikit - Provider
 
-Lightweight provider (service locator) to register and resolve **services and managers** by type, with explicit registration and shutdown-aware resolution.
+Lightweight provider to register and resolve **services and managers** by type, with explicit registration and shutdown-aware resolution.
 
 > WARN: This package is experimental and subject to frequent changes. It is not intended for public use.
 
@@ -55,4 +55,5 @@ MxProvider.Clear();
 ## Notes
 
 - `Register<T>` registers under `typeof(T)`, so register interfaces explicitly (`Register<IAudioService>(impl)`) when you want to resolve by interface.
+- Resolution is strict (exact key only). To resolve a manager by both its base and concrete types, register it under both keys: the base class registers itself, the subclass overrides and registers itself too (see the Multi Key Registration sample).
 - Not thread-safe: intended to be used from the main thread.

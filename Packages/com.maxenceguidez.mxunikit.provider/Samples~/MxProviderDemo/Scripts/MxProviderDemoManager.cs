@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MxUnikit.Provider.Samples
+namespace MxUnikit.Provider.Samples.MxProviderDemo
 {
     public class MxProviderDemoManager : MonoBehaviour
     {
@@ -17,9 +17,9 @@ namespace MxUnikit.Provider.Samples
             Debug.Log("--- Basic Registration Demo ---");
 
             AudioService audioService = new AudioService();
-            MxProvider.Register<IAudioService>(audioService);
+            MxProvider.Register(audioService);
 
-            IAudioService service = MxProvider.Get<IAudioService>();
+            AudioService service = MxProvider.Get<AudioService>();
             service.PlaySound("demo_sound");
         }
 
@@ -28,9 +28,9 @@ namespace MxUnikit.Provider.Samples
             Debug.Log("--- Data Service Demo ---");
 
             DataService dataService = new DataService();
-            MxProvider.Register<IDataService>(dataService);
+            MxProvider.Register(dataService);
 
-            IDataService service = MxProvider.Get<IDataService>();
+            DataService service = MxProvider.Get<DataService>();
             string data = service.LoadData();
             Debug.Log($"[Demo] Loaded: {data}");
         }
@@ -39,7 +39,7 @@ namespace MxUnikit.Provider.Samples
         {
             Debug.Log("--- TryGet Demo ---");
 
-            if (MxProvider.TryGet(out IDataService dataService))
+            if (MxProvider.TryGet(out DataService dataService))
             {
                 dataService.SaveData("Test Data");
             }
@@ -48,9 +48,9 @@ namespace MxUnikit.Provider.Samples
                 Debug.Log("[Demo] Service not found");
             }
 
-            if (!MxProvider.TryGet(out ISaveService _))
+            if (!MxProvider.TryGet(out SaveService _))
             {
-                Debug.Log("[Demo] ISaveService not registered (as expected)");
+                Debug.Log("[Demo] SaveService not registered (as expected)");
             }
         }
 

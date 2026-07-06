@@ -14,15 +14,15 @@ scratch/test content and imported samples (mostly git-ignored).
 
 Seven packages are **PROD** (maintained). The rest are **WIP** — do not touch unless asked.
 
-| Package (`com.maxenceguidez.mxunikit.*`) | Version | Deps          | Key types                                                               | Editor             | Sample               |
-|------------------------------------------|---------|---------------|-------------------------------------------------------------------------|--------------------|----------------------|
-| `core`                                   | 0.2.0   | log, provider | `MxCoreManager`, `MxBootstrapper`                                       | —                  | Core Bootstrap       |
-| `debug`                                  | 0.1.0   | —             | `MxDebug`                                                               | —                  | —                    |
-| `extensions`                             | 0.1.0   | —             | `MxExtensions`                                                          | —                  | —                    |
-| `log`                                    | 0.4.0   | —             | `MxLog`, `MxLogConfig`, `MxLogCategory`                                 | ✅ config editor    | MxLog Demo           |
-| `provider`                               | 0.2.0   | log           | `MxProvider`                                                            | ✅ inspector window | MxProvider Demo      |
-| `tests`                                  | 0.2.0   | —             | `RequiredFieldAttribute`, validators, `ProjectReferenceValidationTests` | ✅ validation       | Basic Validation     |
-| `ui`                                     | 0.1.0   | —             | `MxUiManager`, `MxView`                                                 | —                  | Menu And Dialog Demo |
+| Package (`com.maxenceguidez.mxunikit.*`) | Version | Deps          | Key types                                                               | Editor             | Sample                                  |
+|------------------------------------------|---------|---------------|-------------------------------------------------------------------------|--------------------|-----------------------------------------|
+| `core`                                   | 0.2.0   | log, provider | `MxCoreManager`, `MxBootstrapper`                                       | —                  | Core Bootstrap                          |
+| `debug`                                  | 0.1.0   | —             | `MxDebug`                                                               | —                  | —                                       |
+| `extensions`                             | 0.1.0   | —             | `MxExtensions`                                                          | —                  | —                                       |
+| `log`                                    | 0.4.0   | —             | `MxLog`, `MxLogConfig`, `MxLogCategory`                                 | ✅ config editor    | MxLog Demo                              |
+| `provider`                               | 0.3.0   | log           | `MxProvider`                                                            | ✅ inspector window | MxProvider Demo, Multi Key Registration |
+| `tests`                                  | 0.2.0   | —             | `RequiredFieldAttribute`, validators, `ProjectReferenceValidationTests` | ✅ validation       | Basic Validation                        |
+| `ui`                                     | 0.1.0   | —             | `MxUiManager`, `MxView`                                                 | —                  | Menu And Dialog Demo                    |
 
 WIP (ignore): `i18n`, `singleton`, `timer`, `ui`.
 
@@ -65,16 +65,20 @@ Deliberate design: **no singletons**. Managers/services are wired through a serv
 
 - **`MxProvider`** (provider) — static, type-keyed registry for *services and managers* alike.
   `Register<T>` / `Get<T>` / `TryGet<T>` / `Unregister<T>` / `IsRegistered<T>` / `GetAll` / `Clear`.
-  No marker interface (`where T : class`). `Get<T>` logs an error when missing, but stays silent
+  No marker interface (`where T : class`). Resolution is strict: one key = `typeof(T)` at the
+  registration call site; an instance needed under several types (e.g. base + concrete manager)
+  is registered under each key explicitly. `Get<T>` logs an error when missing, but stays silent
   during shutdown (`_isQuitting`, hooked to `Application.quitting`). State resets on
   `SubsystemRegistration`. Logs via `MxLog`.
 - **`MxBootstrapper`** (core) — abstract `MonoBehaviour`, sits in the bootstrap scene alongside
-  `MxCoreManager`. Registers itself into `MxProvider` in `Awake`. In `Start` runs the abstract
+  `MxCoreManager`. Registers itself into `MxProvider` in `Awake` (`Awake`/`OnDestroy` are
+  `protected virtual`). In `Start` runs the abstract
   `Preload()` (backend services, sign in...), fires `OnPreloaded`, then loads `_nextSceneName`. No
   `DontDestroyOnLoad` — it's disposable, destroyed with the bootstrap scene once the next scene
   loads; it never waits for `MxCoreManager` to finish. Inherit it, implement `Preload()`.
-- **`MxCoreManager`** (core) — abstract `MonoBehaviour`. In `Awake`: `DontDestroyOnLoad` +
-  registers itself into `MxProvider`. In `Start`, resolves `MxBootstrapper` via `MxProvider` and
+- **`MxCoreManager`** (core) — abstract `MonoBehaviour`. In `Awake` (`protected virtual`, as is
+  `OnDestroy`): `DontDestroyOnLoad` + registers itself into `MxProvider`; subclasses override
+  both to also register/unregister under their concrete type. In `Start`, resolves `MxBootstrapper` via `MxProvider` and
   subscribes to its `OnPreloaded`; when it fires, runs its own `InitializeAsync()` (wraps the
   abstract `Initialize()`, fires `OnInitialized`) without the bootstrapper waiting on it. Inherit
   it, implement `Initialize()` for the actual game startup (UI, gameplay systems...) — it survives

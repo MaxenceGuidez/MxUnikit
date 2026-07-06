@@ -1,16 +1,8 @@
 using UnityEngine;
 
-namespace MxUnikit.Provider.Samples
+namespace MxUnikit.Provider.Samples.MxProviderDemo
 {
-    #region Audio
-
-    public interface IAudioService
-    {
-        public void PlaySound(string soundName);
-        public void StopSound();
-    }
-
-    public class AudioService : IAudioService
+    public class AudioService
     {
         public AudioService()
         {
@@ -28,17 +20,7 @@ namespace MxUnikit.Provider.Samples
         }
     }
 
-    #endregion
-
-    #region Data
-
-    public interface IDataService
-    {
-        public void SaveData(string data);
-        public string LoadData();
-    }
-
-    public class DataService : IDataService
+    public class DataService
     {
         public DataService()
         {
@@ -57,16 +39,7 @@ namespace MxUnikit.Provider.Samples
         }
     }
 
-    #endregion
-
-    #region Input
-
-    public interface IInputManager
-    {
-        public void ProcessInput();
-    }
-
-    public class InputManager : MonoBehaviour, IInputManager
+    public class InputManager : MonoBehaviour
     {
         private void Awake()
         {
@@ -79,9 +52,7 @@ namespace MxUnikit.Provider.Samples
         }
     }
 
-    #endregion
-
-    public interface ISaveService
+    public class SaveService
     {
 
     }

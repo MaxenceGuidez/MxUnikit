@@ -6,7 +6,7 @@
       "source": "embedded",
       "dependencies": {
         "com.maxenceguidez.mxunikit.log": "0.4.0",
-        "com.maxenceguidez.mxunikit.provider": "0.2.0"
+        "com.maxenceguidez.mxunikit.provider": "0.3.0"
       }
     },
     "com.maxenceguidez.mxunikit.debug": {

@@ -1,6 +1,6 @@
 {
-  "name": "MaxenceGuidez.MxUnikit.Provider.Samples",
-  "rootNamespace": "MxUnikit.Provider.Samples",
+  "name": "MaxenceGuidez.MxUnikit.Provider.Samples.MxProviderDemo",
+  "rootNamespace": "MxUnikit.Provider.Samples.MxProviderDemo",
   "references": [
     "MaxenceGuidez.MxUnikit.Provider"
   ],
